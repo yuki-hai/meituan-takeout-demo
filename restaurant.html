@@ -625,11 +625,15 @@
     </div>
 
     <script>
-        // 食物图片关键词映射
+        // 食物图片映射
         const FOOD_IMAGES = {
             coffee: 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=400&h=400&fit=crop',
+            americano: 'https://images.unsplash.com/photo-1559056199-641a0ac8b3f7?w=400&h=400&fit=crop',
+            croissant: 'https://images.unsplash.com/photo-1550507569-5f0e718daeb4?w=400&h=400&fit=crop',
             rice: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop',
-            hotpot: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop'
+            noodles: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=400&fit=crop',
+            hotpot: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop',
+            tea: 'https://images.unsplash.com/photo-1597318130005-3ee15a8a5240?w=400&h=400&fit=crop'
         };
 
         const RESTAURANTS_DATA = {
@@ -648,21 +652,21 @@
                     {
                         name: '热销推荐',
                         dishes: [
-                            { id: 101, name: '全冰小黄油美式', desc: '冰爽畅快', price: 13.9, originalPrice: 24, sales: 100 },
-                            { id: 102, name: '甜蜜杯咖啡', desc: '香甜顺滑', price: 16.9, originalPrice: 28, sales: 80 }
+                            { id: 101, name: '全冰小黄油美式', desc: '冰爽畅快', price: 13.9, originalPrice: 24, sales: 100, image: FOOD_IMAGES.americano },
+                            { id: 102, name: '甜蜜杯咖啡', desc: '香甜顺滑', price: 16.9, originalPrice: 28, sales: 80, image: FOOD_IMAGES.coffee }
                         ]
                     },
                     {
                         name: '咖啡',
                         dishes: [
-                            { id: 103, name: '美式咖啡', desc: '经典黑咖啡', price: 9.9, originalPrice: 18, sales: 120 },
-                            { id: 104, name: '拿铁', desc: '香浓奶香', price: 12.9, originalPrice: 22, sales: 110 }
+                            { id: 103, name: '美式咖啡', desc: '经典黑咖啡', price: 9.9, originalPrice: 18, sales: 120, image: FOOD_IMAGES.americano },
+                            { id: 104, name: '拿铁', desc: '香浓奶香', price: 12.9, originalPrice: 22, sales: 110, image: FOOD_IMAGES.coffee }
                         ]
                     },
                     {
                         name: '小食',
                         dishes: [
-                            { id: 105, name: '法式羊角包', desc: '酥脆可口', price: 8.9, originalPrice: 15, sales: 90 }
+                            { id: 105, name: '法式羊角包', desc: '酥脆可口', price: 8.9, originalPrice: 15, sales: 90, image: FOOD_IMAGES.croissant }
                         ]
                     }
                 ]
@@ -682,8 +686,8 @@
                     {
                         name: '热销推荐',
                         dishes: [
-                            { id: 201, name: '猪脚饭', desc: '酥脆美味', price: 16, originalPrice: 28, sales: 200 },
-                            { id: 202, name: '鸡腿饭', desc: '嫩滑鲜香', price: 14, originalPrice: 24, sales: 180 }
+                            { id: 201, name: '猪脚饭', desc: '酥脆美味', price: 16, originalPrice: 28, sales: 200, image: FOOD_IMAGES.rice },
+                            { id: 202, name: '鸡腿饭', desc: '嫩滑鲜香', price: 14, originalPrice: 24, sales: 180, image: FOOD_IMAGES.rice }
                         ]
                     }
                 ]
@@ -703,7 +707,7 @@
                     {
                         name: '热锅',
                         dishes: [
-                            { id: 301, name: '麻辣锅底', desc: '麻辣鲜香', price: 18, originalPrice: 32, sales: 150 }
+                            { id: 301, name: '麻辣锅底', desc: '麻辣鲜香', price: 18, originalPrice: 32, sales: 150, image: FOOD_IMAGES.hotpot }
                         ]
                     }
                 ]
@@ -764,7 +768,7 @@
                         const count = cart.items.find(item => item.id === dish.id)?.count || 0;
                         return `
                             <div class="dish-item">
-                                <div class="dish-img" style="background: url('${FOOD_IMAGES.coffee}') center/cover;"></div>
+                                <div class="dish-img" style="background: url('${dish.image}') center/cover;"></div>
                                 <div class="dish-info">
                                     <div class="dish-name">${dish.name}</div>
                                     <div class="dish-desc">${dish.desc}</div>
