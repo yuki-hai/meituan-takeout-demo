@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>美团外卖 - 首页</title>
+    <title>馋了吗 - 模拟点单</title>
     <style>
         * {
             margin: 0;
@@ -152,6 +152,17 @@
             align-items: center;
             justify-content: center;
             font-size: 28px;
+        }
+
+        .category-item.active .category-icon {
+            outline: 3px solid #FFC300;
+            outline-offset: 2px;
+            box-shadow: 0 6px 14px rgba(255, 195, 0, 0.24);
+        }
+
+        .category-item.active .category-name {
+            color: #8a5a00;
+            font-weight: 700;
         }
 
         .category-name {
@@ -429,6 +440,19 @@
             cursor: pointer;
             z-index: 10;
         }
+        .savings-summary {
+            margin: 12px 16px 0;
+            padding: 14px 16px;
+            border-radius: 14px;
+            color: #fff;
+            background: linear-gradient(135deg, #2f2520, #5d4033);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .savings-summary strong { color: #ffd166; font-size: 20px; }
+        .savings-summary small { display: block; color: rgba(255,255,255,.65); margin-bottom: 3px; }
     </style>
 </head>
 <body>
@@ -438,20 +462,25 @@
             <div class="header-top">
                 <button class="location-btn">
                     <span class="location-icon">📍</span>
-                    <span class="location-text">上海数禾信息科技...</span>
+                    <span class="location-text">演示位置 · 上海张江</span>
                 </button>
                 <span style="font-size: 12px; color: #999;">今天</span>
             </div>
 
             <div class="search-container">
-                <input type="text" class="search-bar" placeholder="搜索商家、菜品">
-                <button class="search-btn">搜索</button>
+                <input type="text" class="search-bar" id="searchInput" placeholder="搜索演示商家">
+                <button class="search-btn" onclick="searchRestaurants()">搜索</button>
             </div>
 
             <div class="delivery-type" style="margin-top: 12px;">
                 <button class="delivery-tab active">外卖</button>
                 <button class="delivery-tab">自取</button>
             </div>
+        </div>
+
+        <div class="savings-summary">
+            <div><small>馋了吗 · 本机累计没点</small><b><span id="savedOrders">0</span> 单</b></div>
+            <div style="text-align:right"><small>预计净省</small><strong>¥<span id="savedMoney">0.0</span></strong></div>
         </div>
 
         <div class="container">
@@ -473,19 +502,19 @@
 
         <!-- Tab Bar -->
         <div class="tab-bar">
-            <button class="tab-item active" onclick="switchTab('home')">
+            <button class="tab-item active" onclick="switchTab('home', this)">
                 <span class="tab-icon">🏠</span>
                 <span>首页</span>
             </button>
-            <button class="tab-item" onclick="switchTab('search')">
+            <button class="tab-item" onclick="switchTab('search', this)">
                 <span class="tab-icon">🔍</span>
                 <span>搜索</span>
             </button>
-            <button class="tab-item" onclick="switchTab('order')">
+            <button class="tab-item" onclick="switchTab('order', this)">
                 <span class="tab-icon">📋</span>
                 <span>订单</span>
             </button>
-            <button class="tab-item" onclick="switchTab('me')">
+            <button class="tab-item" onclick="switchTab('me', this)">
                 <span class="tab-icon">👤</span>
                 <span>我的</span>
             </button>
@@ -495,6 +524,7 @@
         <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
     </div>
 
+    <script src="app-state.js"></script>
     <script>
         // 数据
         const CATEGORIES = [
@@ -509,7 +539,7 @@
         ];
 
         const PROMOTIONS = [
-            { id: 1, title: '葛香江阁(张江山东小炒鸡', price: '¥22.1', desc: '免配送费' },
+            { id: 1, title: '葛香江阁（张江山东小炒鸡）', price: '¥22.1', desc: '免配送费' },
             { id: 2, title: '大宝口福·牛羊牛腩牛杂堡单人套', price: '¥23.9', desc: '低至3.4折' }
         ];
 
@@ -535,7 +565,7 @@
                 deliveryFee: 3.1,
                 minPrice: 20,
                 image: '🍱',
-                tags: ['月售1000+', '美团外送'],
+                tags: ['月售1000+', '演示外送'],
                 activities: ['满35减5']
             },
             {
@@ -552,17 +582,36 @@
             }
         ];
 
+        const CATEGORY_RESTAURANTS = {
+            1: [1, 2, 3],
+            2: [1],
+            3: [],
+            4: [],
+            5: [],
+            6: [2, 3],
+            7: [1],
+            8: [1, 2]
+        };
+        let activeCategory = 1;
+        let activeQuery = '';
+
         // 初始化
         function init() {
             renderCategories();
             renderPromotions();
             renderRestaurants();
+            const stats = Chanlema.loadStats();
+            document.getElementById('savedOrders').textContent = stats.skippedOrders;
+            document.getElementById('savedMoney').textContent = Number(stats.savedMoney).toFixed(1);
+            document.getElementById('searchInput').addEventListener('keydown', event => {
+                if (event.key === 'Enter') searchRestaurants();
+            });
         }
 
         function renderCategories() {
             const carousel = document.getElementById('categoryCarousel');
             carousel.innerHTML = CATEGORIES.map(cat => `
-                <div class="category-item">
+                <div class="category-item ${cat.id === activeCategory ? 'active' : ''}" onclick="filterByCategory(${cat.id})">
                     <div class="category-icon">${cat.icon}</div>
                     <div class="category-name">${cat.name}</div>
                 </div>
@@ -580,14 +629,20 @@
             `).join('');
         }
 
-        function renderRestaurants() {
+        function getFilteredRestaurants() {
+            const restaurantIds = CATEGORY_RESTAURANTS[activeCategory] || [];
+            return RESTAURANTS.filter(item => restaurantIds.includes(item.id)
+                && (!activeQuery || item.name.toLowerCase().includes(activeQuery)));
+        }
+
+        function renderRestaurants(list = getFilteredRestaurants()) {
             const section = document.getElementById('restaurantSection');
             section.innerHTML = `
                 <div class="section-header">
                     <span class="section-title">附近商家</span>
-                    <span class="section-more">更多 ></span>
+                    <span class="section-more">演示数据</span>
                 </div>
-                ${RESTAURANTS.map(r => `
+                ${list.length ? list.map(r => `
                     <div class="restaurant-card" onclick="goToRestaurant(${r.id})">
                         <div class="restaurant-header-img">
                             ${r.image}
@@ -606,24 +661,46 @@
                             </div>
                         </div>
                     </div>
-                `).join('')}
+                `).join('') : '<div style="padding:32px 16px;text-align:center;color:#999">没有匹配的演示商家</div>'}
             `;
+        }
+
+        function searchRestaurants() {
+            activeQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+            renderRestaurants();
+        }
+
+        function filterByCategory(categoryId) {
+            activeCategory = categoryId;
+            renderCategories();
+            renderRestaurants();
+            document.getElementById('restaurantSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function goToRestaurant(id) {
             window.location.href = `restaurant.html?id=${id}`;
         }
 
-        function switchTab(tab) {
+        function switchTab(tab, element) {
             document.querySelectorAll('.tab-item').forEach((item, index) => {
                 item.classList.remove('active');
             });
-            event.target.closest('.tab-item').classList.add('active');
+            element.classList.add('active');
 
             if (tab === 'home') {
-                console.log('已在首页');
-            } else {
-                alert(`${tab}页面开发中`);
+                activeCategory = 1;
+                activeQuery = '';
+                document.getElementById('searchInput').value = '';
+                renderCategories();
+                renderRestaurants();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (tab === 'search') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                document.getElementById('searchInput').focus();
+            } else if (tab === 'order') {
+                window.location.href = 'history.html';
+            } else if (tab === 'me') {
+                alert('免登录演示版：购物车和没点记录只保存在这台设备的浏览器里。');
             }
         }
 

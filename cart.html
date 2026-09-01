@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>购物车结算</title>
+    <title>馋了吗 - 确认订单</title>
     <style>
         * {
             margin: 0;
@@ -376,7 +376,8 @@
             background: #ffb700;
         }
 
-        .submit-btn.disabled {
+        .submit-btn.disabled,
+        .submit-btn:disabled {
             background: #ccc;
             color: #999;
             cursor: not-allowed;
@@ -408,8 +409,8 @@
             <div class="address-section" onclick="editAddress()">
                 <div class="address-info">
                     <div class="address-title">配送地址</div>
-                    <div class="address-detail">上海市浦东新区陆家嘴环路1000号</div>
-                    <div class="address-contact">收货人：张三 13800138000</div>
+                    <div class="address-detail">演示位置 · 上海张江附近</div>
+                    <div class="address-contact">不需要真实姓名、手机号或门牌号</div>
                 </div>
                 <div class="address-arrow">></div>
             </div>
@@ -422,7 +423,7 @@
                         <span>本单由商家配送</span>
                     </div>
                     <div class="delivery-badge">
-                        <span>¥6</span>
+                        <span id="deliveryFeeBadge">¥0</span>
                         <div class="radio checked" id="delivery-1"></div>
                     </div>
                 </div>
@@ -452,7 +453,7 @@
                 <div class="coupon-item" onclick="selectCoupon()">
                     <div class="coupon-label">
                         <span>🎫</span>
-                        <span>美团红包</span>
+                        <span>演示红包</span>
                     </div>
                     <div class="coupon-value" id="couponValue">选择优惠</div>
                 </div>
@@ -461,7 +462,7 @@
                         <span>🏷️</span>
                         <span>商家优惠</span>
                     </div>
-                    <div id="discountValue">-¥10.1</div>
+                    <div id="discountValue">-¥0</div>
                 </div>
             </div>
 
@@ -475,25 +476,25 @@
             <div class="fee-summary">
                 <div class="fee-row">
                     <span class="fee-label">商品总价</span>
-                    <span class="fee-value" id="foodTotal">¥26.8</span>
+                    <span class="fee-value" id="foodTotal">¥0.00</span>
                 </div>
                 <div class="fee-row">
                     <span class="fee-label">配送费</span>
-                    <span class="fee-value" id="deliveryFeeValue">¥6</span>
+                    <span class="fee-value" id="deliveryFeeValue">¥0.00</span>
                 </div>
                 <div class="fee-row">
                     <span class="fee-label">商家优惠</span>
-                    <span class="fee-value discount" id="discountFeeValue">-¥10.1</span>
+                    <span class="fee-value discount" id="discountFeeValue">-¥0.00</span>
                 </div>
                 <div class="fee-row total-row">
                     <span>合计</span>
-                    <span class="total-price" id="totalPrice">22.7</span>
+                    <span class="total-price" id="totalPrice">0.00</span>
                 </div>
             </div>
 
             <!-- Notice -->
             <div class="notice">
-                ⚠️ 本订单为模拟下单，不会扣款，不会真实配送。下单后系统将展示您本次虚拟节约的金额和卡路里。
+                ⚠️ 本订单为模拟下单，不会扣款或配送。下一步会先询问你准备吃什么，再计算真正的净节省。
             </div>
         </div>
 
@@ -501,19 +502,23 @@
         <div class="bottom-bar">
             <div class="total-info">
                 <div class="total-label">合计</div>
-                <div class="total-amount" id="bottomTotal">22.7</div>
+                <div class="total-amount" id="bottomTotal">0.00</div>
             </div>
-            <button class="submit-btn" onclick="placeOrder()">虚拟下单</button>
+            <button class="submit-btn" id="submitButton" onclick="placeOrder()">模拟付款</button>
         </div>
     </div>
 
+    <script src="app-state.js"></script>
     <script>
-        // 从 localStorage 获取购物车数据
-        const cart = JSON.parse(localStorage.getItem('cart') || '{"items":[],"restaurant":{}}');
-        let selectedDelivery = 1;
-        let selectedCoupon = 0;
+        const cart = Chanlema.loadCart();
+        let selectedDelivery = 'delivery';
+        let currentOrder = Chanlema.calculateOrder(cart, selectedDelivery);
 
         function init() {
+            if (!cart.items.length || !cart.restaurant) {
+                document.getElementById('submitButton').disabled = true;
+                document.getElementById('submitButton').textContent = '购物车为空';
+            }
             renderOrderItems();
             updateTotal();
         }
@@ -529,7 +534,7 @@
 
             container.innerHTML = items.map(item => `
                 <div class="order-item">
-                    <span class="item-name">${item.name}</span>
+                    <span class="item-name">${item.name}${item.specs?.length ? `<small style="display:block;color:#999;margin-top:3px">${item.specs.join(' · ')}</small>` : ''}</span>
                     <span class="item-count">×${item.count}</span>
                     <span class="item-price">${(item.price * item.count).toFixed(2)}</span>
                 </div>
@@ -540,58 +545,52 @@
         }
 
         function selectDelivery(type) {
-            selectedDelivery = type;
-            document.getElementById('delivery-1').classList.toggle('checked', type === 1);
-            document.getElementById('delivery-2').classList.toggle('checked', type === 2);
+            selectedDelivery = type === 1 ? 'delivery' : 'pickup';
+            document.getElementById('delivery-1').classList.toggle('checked', selectedDelivery === 'delivery');
+            document.getElementById('delivery-2').classList.toggle('checked', selectedDelivery === 'pickup');
             updateTotal();
         }
 
         function selectCoupon() {
-            alert('选择优惠券功能开发中');
+            alert('演示版暂不叠加额外红包，商家满减会自动计算');
         }
 
         function selectDiscount() {
-            alert('商家优惠详情开发中');
+            const rules = cart.restaurant?.discountRules || [];
+            alert(rules.length
+                ? rules.map(rule => `满${rule.threshold}减${rule.amount}`).join('，')
+                : '该演示商家暂无满减');
         }
 
         function updateTotal() {
-            const items = cart.items || [];
-            const foodTotal = items.reduce((sum, item) => sum + item.price * item.count, 0);
-            const deliveryFee = selectedDelivery === 1 ? 6 : 0;
-            const discount = 10.1;
-            const total = foodTotal + deliveryFee - discount;
-
-            document.getElementById('foodTotal').textContent = `¥${foodTotal.toFixed(2)}`;
-            document.getElementById('deliveryFeeValue').textContent = `¥${deliveryFee}`;
-            document.getElementById('discountFeeValue').textContent = `-¥${discount}`;
-            document.getElementById('totalPrice').textContent = total.toFixed(2);
-            document.getElementById('bottomTotal').textContent = total.toFixed(2);
+            currentOrder = Chanlema.calculateOrder(cart, selectedDelivery);
+            document.getElementById('foodTotal').textContent = `¥${currentOrder.foodTotal.toFixed(2)}`;
+            document.getElementById('deliveryFeeValue').textContent = `¥${currentOrder.deliveryFee.toFixed(2)}`;
+            document.getElementById('deliveryFeeBadge').textContent = `¥${Number(cart.restaurant?.deliveryFee || 0).toFixed(1)}`;
+            document.getElementById('discountFeeValue').textContent = `-¥${currentOrder.discount.toFixed(2)}`;
+            document.getElementById('discountValue').textContent = `-¥${currentOrder.discount.toFixed(2)}`;
+            document.getElementById('totalPrice').textContent = currentOrder.total.toFixed(2);
+            document.getElementById('bottomTotal').textContent = currentOrder.total.toFixed(2);
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = !currentOrder.canCheckout;
+            submitButton.textContent = currentOrder.itemCount === 0
+                ? '购物车为空'
+                : currentOrder.canCheckout
+                    ? '模拟付款'
+                    : `差¥${currentOrder.amountToMinimum.toFixed(1)}起送`;
         }
 
         function editAddress() {
-            alert('修改地址功能开发中');
+            alert('当前使用演示位置，不会读取或上传你的真实地址');
         }
 
         function placeOrder() {
-            const items = cart.items || [];
-            const foodTotal = items.reduce((sum, item) => sum + item.price * item.count, 0);
-            const deliveryFee = selectedDelivery === 1 ? 6 : 0;
-            const discount = 10.1;
-            const totalPrice = foodTotal + deliveryFee - discount;
-
-            // 计算总卡路里（使用实际菜品卡路里数据）
-            const totalCalories = items.reduce((sum, item) => sum + (item.calories * item.count), 0);
-
-            // 保存订单信息，跳转到成功页
-            const orderData = {
-                savedMoney: totalPrice,
-                savedCalories: totalCalories,
-                items: items,
-                restaurant: cart.restaurant
-            };
-
-            localStorage.setItem('lastOrder', JSON.stringify(orderData));
-            window.location.href = 'success.html';
+            if (!currentOrder.canCheckout) {
+                alert(currentOrder.itemCount === 0 ? '购物车为空' : `还差 ¥${currentOrder.amountToMinimum.toFixed(1)} 起送`);
+                return;
+            }
+            Chanlema.createPendingOrder(cart, selectedDelivery);
+            window.location.href = 'decision.html';
         }
 
         function goBack() {

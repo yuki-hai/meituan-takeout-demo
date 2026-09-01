@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>下单成功</title>
+    <title>馋了吗 - 本次结果</title>
     <style>
         * {
             margin: 0;
@@ -285,23 +285,23 @@
     <div class="app-container">
         <!-- Success Card -->
         <div class="success-card">
-            <div class="success-icon">✅</div>
-            <div class="success-title">虚拟下单成功！</div>
-            <div class="success-subtitle">本次未产生真实消费<br>您已成功「管住嘴、守住钱」</div>
+            <div class="success-icon">✨</div>
+            <div class="success-title">这次冲动，你接住了</div>
+            <div class="success-subtitle">本次未产生真实消费<br>没点，也是一笔完成的订单</div>
         </div>
 
         <!-- Savings Card -->
         <div class="savings-card">
-            <div class="savings-title">本次虚拟节约</div>
+            <div class="savings-title">本次净结果</div>
             <div class="savings-row">
                 <div class="savings-item">
                     <div class="savings-value money" id="savedMoney">¥0</div>
-                    <div class="savings-label">节约金额</div>
+                    <div class="savings-label" id="moneyLabel">预计净省</div>
                 </div>
                 <div class="savings-divider"></div>
                 <div class="savings-item">
                     <div class="savings-value calories" id="savedCalories">0</div>
-                    <div class="savings-label">节约卡路里（千卡）</div>
+                    <div class="savings-label" id="calorieLabel">预计少摄入（千卡）</div>
                 </div>
             </div>
             <div class="savings-tips" id="savingsTips"></div>
@@ -320,7 +320,7 @@
             </div>
             <div class="info-item">
                 <span class="info-label">配送方式</span>
-                <span class="info-value">商家配送</span>
+                <span class="info-value" id="deliveryMode">商家配送</span>
             </div>
             <div class="info-item">
                 <span class="info-label">商品总价</span>
@@ -328,11 +328,15 @@
             </div>
             <div class="info-item">
                 <span class="info-label">配送费</span>
-                <span class="info-value">¥6</span>
+                <span class="info-value" id="deliveryFee">¥0</span>
             </div>
             <div class="info-item">
                 <span class="info-label">商家优惠</span>
-                <span class="info-value" style="color: #52c41a;">-¥10.1</span>
+                <span class="info-value" id="discountFee" style="color: #52c41a;">-¥0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">替代餐</span>
+                <span class="info-value" id="alternativeMeal">—</span>
             </div>
             <div class="info-item" style="font-weight: 700; font-size: 14px; border-top: 1px solid #f5f5f5; padding-top: 12px; margin-top: 8px;">
                 <span>合计</span>
@@ -347,9 +351,9 @@
         <div class="share-card">
             <div class="share-title">分享给好友</div>
             <div class="share-buttons">
-                <button class="share-btn" onclick="shareWeChat()">💬</button>
-                <button class="share-btn" onclick="shareQQ()">🎈</button>
-                <button class="share-btn" onclick="shareFriends()">👥</button>
+                <button class="share-btn" onclick="shareResult()">💬</button>
+                <button class="share-btn" onclick="shareResult()">🎈</button>
+                <button class="share-btn" onclick="shareResult()">👥</button>
             </div>
         </div>
 
@@ -360,60 +364,54 @@
         </div>
     </div>
 
+    <script src="app-state.js"></script>
     <script>
-        function init() {
-            const orderData = JSON.parse(localStorage.getItem('lastOrder') || '{}');
+        let orderData = null;
 
-            if (!orderData.savedMoney) {
-                alert('订单数据丢失');
+        function caloriePresentation(low, high) {
+            if (low >= 0) return { label: '预计少摄入（千卡）', value: `${low}–${high}` };
+            if (high <= 0) return { label: '预计多摄入（千卡）', value: `${Math.abs(high)}–${Math.abs(low)}` };
+            return { label: '热量可能变化（千卡）', value: `${low}～+${high}` };
+        }
+
+        function init() {
+            orderData = Chanlema.loadLastOrder();
+            if (!orderData || !orderData.calculation) {
+                alert('结果数据不存在，请先完成一次模拟点单');
                 window.location.href = 'index.html';
                 return;
             }
 
-            // 设置保存的金额和卡路里
-            document.getElementById('savedMoney').textContent = `¥${orderData.savedMoney.toFixed(2)}`;
-            document.getElementById('savedCalories').textContent = orderData.savedCalories;
+            const moneyIsSaved = orderData.netSaved >= 0;
+            const calorieResult = caloriePresentation(orderData.calorieDiffLow, orderData.calorieDiffHigh);
+            document.getElementById('savedMoney').textContent = `¥${Math.abs(orderData.netSaved).toFixed(2)}`;
+            document.getElementById('moneyLabel').textContent = moneyIsSaved ? '预计净省' : '预计多花';
+            document.getElementById('savedCalories').textContent = calorieResult.value;
+            document.getElementById('calorieLabel').textContent = calorieResult.label;
+            document.getElementById('savingsTips').textContent = moneyIsSaved
+                ? `外卖 ¥${orderData.calculation.total.toFixed(1)} − ${orderData.alternative.label} ¥${orderData.alternative.cost.toFixed(1)}，才是这次真正留下的钱。`
+                : `${orderData.alternative.label}比这单外卖贵 ¥${Math.abs(orderData.netSaved).toFixed(1)}，结果也如实记录。`;
 
-            // 生成激励文案
-            const tips = [
-                '省下的这笔钱，足够买一本好书，投资自己。',
-                `这些卡路里，相当于慢跑 ${Math.round(orderData.savedCalories / 10)} 分钟，今天运动一下？`,
-                '理性消费 +1，健康习惯 +1，今天也是自律的一天！',
-                '假装点过就是吃过，钱包和身体都感谢你。',
-                '少点一次外卖，多一次自己下厨的机会。'
-            ];
-            const tip = tips[Math.floor(Math.random() * tips.length)];
-            document.getElementById('savingsTips').textContent = tip;
+            document.getElementById('shopName').textContent = orderData.restaurant?.name || '演示商家';
+            document.getElementById('orderTime').textContent = new Date(orderData.completedAt || orderData.createdAt).toLocaleString('zh-CN');
+            document.getElementById('deliveryMode').textContent = orderData.calculation.deliveryMode === 'pickup' ? '到店自取' : '商家配送';
+            document.getElementById('foodTotal').textContent = `¥${orderData.calculation.foodTotal.toFixed(2)}`;
+            document.getElementById('deliveryFee').textContent = `¥${orderData.calculation.deliveryFee.toFixed(2)}`;
+            document.getElementById('discountFee').textContent = `-¥${orderData.calculation.discount.toFixed(2)}`;
+            document.getElementById('alternativeMeal').textContent = `${orderData.alternative.label} · ¥${orderData.alternative.cost.toFixed(1)}`;
+            document.getElementById('totalPrice').textContent = `¥${orderData.calculation.total.toFixed(2)}`;
 
-            // 设置订单信息
-            document.getElementById('shopName').textContent = orderData.restaurant?.name || '瑞幸咖啡';
-            document.getElementById('orderTime').textContent = new Date().toLocaleString('zh-CN');
-
-            // 计算价格
-            const foodTotal = orderData.items.reduce((sum, item) => sum + item.price * item.count, 0);
-            const totalPrice = orderData.savedMoney;
-
-            document.getElementById('foodTotal').textContent = `¥${foodTotal.toFixed(2)}`;
-            document.getElementById('totalPrice').textContent = `¥${totalPrice.toFixed(2)}`;
-
-            // 渲染订单项目
             const itemsContainer = document.getElementById('orderItems');
-            if (orderData.items && orderData.items.length > 0) {
-                itemsContainer.innerHTML = `
-                    <div style="border-top: 1px solid #f5f5f5; padding-top: 12px; margin-top: 12px;">
-                        ${orderData.items.map(item => `
-                            <div class="order-item">
-                                <span>${item.name} × ${item.count}</span>
-                                <span class="price-value">¥${(item.price * item.count).toFixed(2)}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            }
-
-            // 清空 localStorage
-            localStorage.removeItem('lastOrder');
-            localStorage.removeItem('cart');
+            itemsContainer.innerHTML = `
+                <div style="border-top: 1px solid #f5f5f5; padding-top: 12px; margin-top: 12px;">
+                    ${orderData.items.map(item => `
+                        <div class="order-item">
+                            <span>${item.name}${item.specs?.length ? `<small style="display:block;color:#999">${item.specs.join(' · ')}</small>` : ''} × ${item.count}</span>
+                            <span class="price-value">¥${(item.price * item.count).toFixed(2)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
         }
 
         function goHome() {
@@ -421,19 +419,25 @@
         }
 
         function goOrders() {
-            alert('订单历史页面开发中');
+            window.location.href = 'history.html';
         }
 
-        function shareWeChat() {
-            alert('分享到微信功能开发中');
-        }
-
-        function shareQQ() {
-            alert('分享到 QQ 功能开发中');
-        }
-
-        function shareFriends() {
-            alert('分享给朋友功能开发中');
+        async function shareResult() {
+            const text = `我在「馋了吗」放弃了一单外卖，${orderData.netSaved >= 0 ? `预计净省 ¥${orderData.netSaved.toFixed(1)}` : `替代餐预计多花 ¥${Math.abs(orderData.netSaved).toFixed(1)}`}。`;
+            if (navigator.share) {
+                try { await navigator.share({ title: '馋了吗 · 本次记录', text }); } catch (error) {}
+                return;
+            }
+            if (navigator.clipboard?.writeText) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    alert('结果文案已复制');
+                } catch (error) {
+                    alert(text);
+                }
+                return;
+            }
+            alert(text);
         }
 
         init();

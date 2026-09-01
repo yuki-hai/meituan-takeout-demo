@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>馋了吗 - 没点记录</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            color: #292622;
+            background: #f7f6f3;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+        }
+
+        button { font: inherit; }
+
+        .app {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            margin: 0 auto;
+            padding-bottom: 104px;
+            background: linear-gradient(180deg, #fff1b8 0, #f7f6f3 220px);
+        }
+
+        .header {
+            display: grid;
+            grid-template-columns: 44px 1fr 44px;
+            align-items: center;
+            height: 58px;
+            padding: 0 12px;
+        }
+
+        .back {
+            width: 38px;
+            height: 38px;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .75);
+            cursor: pointer;
+            font-size: 22px;
+        }
+
+        h1 { text-align: center; font-size: 18px; }
+
+        .summary {
+            margin: 8px 16px 18px;
+            padding: 22px;
+            border-radius: 22px;
+            color: #fff;
+            background: linear-gradient(135deg, #30251f, #674735);
+            box-shadow: 0 14px 28px rgba(70, 46, 31, .16);
+        }
+
+        .summary-label { color: rgba(255, 255, 255, .68); font-size: 13px; }
+        .summary-money { margin: 6px 0 18px; color: #ffd166; font-size: 36px; font-weight: 800; }
+        .summary-money small { font-size: 20px; }
+
+        .summary-row { display: flex; gap: 10px; }
+        .summary-chip {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .82);
+            background: rgba(255, 255, 255, .1);
+            font-size: 12px;
+        }
+        .summary-chip b { display: block; margin-top: 3px; color: #fff; font-size: 18px; }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0 16px 10px;
+            font-size: 16px;
+        }
+        .section-title small { color: #999; font-size: 11px; font-weight: 400; }
+
+        .history-list { padding: 0 16px; }
+        .history-card {
+            margin-bottom: 12px;
+            padding: 16px;
+            border: 1px solid #eeeae3;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .96);
+            box-shadow: 0 8px 22px rgba(53, 43, 34, .05);
+        }
+
+        .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+        .restaurant { font-size: 15px; font-weight: 700; line-height: 1.45; }
+        .time { margin-top: 4px; color: #aaa; font-size: 11px; }
+        .money { flex: 0 0 auto; text-align: right; color: #20a264; font-size: 17px; font-weight: 800; }
+        .money.more { color: #e25b4d; }
+        .money small { display: block; margin-top: 2px; color: #aaa; font-size: 10px; font-weight: 400; }
+
+        .decision {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 14px;
+            padding-top: 13px;
+            border-top: 1px solid #f2efea;
+            color: #746a61;
+            font-size: 12px;
+        }
+        .decision b { color: #3f3934; font-weight: 600; }
+        .calorie { flex: 0 0 auto; padding: 6px 9px; border-radius: 9px; background: #f3f8f3; color: #398052; }
+        .calorie.more { background: #fff4f1; color: #c85849; }
+
+        .empty {
+            margin: 0 16px;
+            padding: 48px 26px;
+            border-radius: 20px;
+            background: #fff;
+            text-align: center;
+            color: #9b938c;
+        }
+        .empty-icon { margin-bottom: 14px; font-size: 48px; }
+        .empty h2 { margin-bottom: 8px; color: #3e3833; font-size: 17px; }
+        .empty p { font-size: 13px; line-height: 1.7; }
+
+        .footer {
+            position: fixed;
+            left: 50%;
+            bottom: 0;
+            width: 100%;
+            max-width: 480px;
+            padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, .94);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid #eee;
+        }
+        .primary {
+            width: 100%;
+            height: 48px;
+            border: 0;
+            border-radius: 15px;
+            color: #2d271e;
+            background: #ffc300;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <main class="app">
+        <header class="header">
+            <button class="back" onclick="goHome()" aria-label="返回首页">‹</button>
+            <h1>没点记录</h1>
+            <span></span>
+        </header>
+
+        <section class="summary">
+            <div class="summary-label">本机累计预计净省</div>
+            <div class="summary-money"><small>¥</small><span id="savedMoney">0.0</span></div>
+            <div class="summary-row">
+                <div class="summary-chip">完成冷静决策<b><span id="savedOrders">0</span> 次</b></div>
+                <div class="summary-chip">记录范围<b>最近 50 次</b></div>
+            </div>
+        </section>
+
+        <div class="section-title">
+            <strong>每一次决定</strong>
+            <small>仅保存在当前浏览器</small>
+        </div>
+        <section class="history-list" id="historyList"></section>
+    </main>
+
+    <footer class="footer">
+        <button class="primary" onclick="goHome()">继续逛逛</button>
+    </footer>
+
+    <script src="app-state.js"></script>
+    <script>
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>'"]/g, character => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[character]));
+        }
+
+        function caloriePresentation(low, high) {
+            if (low >= 0) return { text: `少 ${low}–${high} 千卡`, more: false };
+            if (high <= 0) return { text: `多 ${Math.abs(high)}–${Math.abs(low)} 千卡`, more: true };
+            return { text: `${low}～+${high} 千卡`, more: false };
+        }
+
+        function renderHistory() {
+            const history = Chanlema.loadHistory();
+            const stats = Chanlema.loadStats();
+            document.getElementById('savedMoney').textContent = Number(stats.savedMoney || 0).toFixed(1);
+            document.getElementById('savedOrders').textContent = Number(stats.skippedOrders || history.length);
+
+            const list = document.getElementById('historyList');
+            if (!history.length) {
+                list.innerHTML = `
+                    <div class="empty">
+                        <div class="empty-icon">🥡</div>
+                        <h2>还没有“没点”记录</h2>
+                        <p>像平常一样选餐，走到模拟付款后再决定<br>这次究竟点，还是换一种吃法。</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = history.map(order => {
+                const netSaved = Number(order.netSaved || 0);
+                const calories = caloriePresentation(Number(order.calorieDiffLow || 0), Number(order.calorieDiffHigh || 0));
+                const completedAt = order.completedAt || order.createdAt;
+                const time = completedAt ? new Date(completedAt).toLocaleString('zh-CN') : '时间未知';
+                return `
+                    <article class="history-card">
+                        <div class="card-top">
+                            <div>
+                                <div class="restaurant">${escapeHtml(order.restaurant?.name || '演示商家')}</div>
+                                <div class="time">${escapeHtml(time)} · 外卖价 ¥${Number(order.calculation?.total || 0).toFixed(1)}</div>
+                            </div>
+                            <div class="money ${netSaved < 0 ? 'more' : ''}">
+                                ${netSaved < 0 ? '多花' : '净省'} ¥${Math.abs(netSaved).toFixed(1)}
+                                <small>相对替代餐</small>
+                            </div>
+                        </div>
+                        <div class="decision">
+                            <span>最后选择 <b>${escapeHtml(order.alternative?.label || '替代餐')}</b> · ¥${Number(order.alternative?.cost || 0).toFixed(1)}</span>
+                            <span class="calorie ${calories.more ? 'more' : ''}">${calories.text}</span>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        renderHistory();
+    </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>馋了吗 - 最后想一下</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #f1efed; color: #2f2926; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
+        button, input { font: inherit; }
+        .app { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; padding: 18px 16px 34px; background: #fffaf6; }
+        .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+        .back { border: 0; background: transparent; width: 40px; height: 40px; border-radius: 50%; font-size: 24px; cursor: pointer; }
+        .safe { padding: 6px 10px; border-radius: 999px; background: #eaf8f2; color: #147457; font-size: 11px; font-weight: 700; }
+        .hero { padding: 22px 18px; border: 1px solid #eee2db; border-radius: 24px; background: #fff; box-shadow: 0 15px 40px rgba(60, 39, 28, .09); text-align: center; }
+        .clock { width: 58px; height: 58px; margin: 0 auto 14px; display: grid; place-items: center; border-radius: 20px; background: #fff0e9; font-size: 26px; }
+        .eyebrow { color: #8a7d75; font-size: 12px; font-weight: 600; }
+        h1 { margin: 6px 0 9px; font-size: 27px; line-height: 1.18; letter-spacing: -.5px; }
+        .intro { margin: 0 auto; max-width: 340px; color: #7b6e67; font-size: 12px; line-height: 1.7; }
+        .order { margin-top: 18px; padding: 15px; border-radius: 17px; background: #f6f0ec; text-align: left; }
+        .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .order strong { color: #ea5a35; font-size: 21px; }
+        .muted { color: #85776f; font-size: 11px; }
+        .section-title { margin: 22px 0 11px; font-size: 15px; }
+        .alternatives { display: grid; gap: 9px; }
+        .alternative { width: 100%; padding: 13px; display: flex; align-items: center; gap: 12px; border: 1px solid #eadfd9; border-radius: 17px; background: #fff; text-align: left; cursor: pointer; }
+        .alternative.selected { border-color: #e85d39; background: #fff2ec; box-shadow: 0 0 0 2px rgba(232, 93, 57, .09); }
+        .alt-icon { width: 40px; height: 40px; flex: 0 0 40px; display: grid; place-items: center; border-radius: 50%; background: #f3eeeb; font-size: 20px; }
+        .selected .alt-icon { background: #e85d39; color: #fff; }
+        .alt-copy { flex: 1; }
+        .alt-copy b { display: block; font-size: 14px; }
+        .alt-copy small { display: block; margin-top: 3px; color: #887a72; }
+        .radio { width: 17px; height: 17px; border: 1px solid #d8cac3; border-radius: 50%; }
+        .selected .radio { border: 5px solid #e85d39; }
+        .custom { display: none; margin-top: 10px; padding: 13px; border-radius: 16px; background: #fff; border: 1px solid #eadfd9; }
+        .custom.show { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        label { color: #786a63; font-size: 11px; }
+        input { width: 100%; margin-top: 5px; padding: 11px; border: 1px solid #ddd0c9; border-radius: 11px; background: #fffdfb; outline: none; }
+        input:focus { border-color: #e85d39; }
+        .preview { margin-top: 14px; padding: 14px; border-radius: 16px; background: #2f2520; color: #fff; }
+        .preview strong { color: #ffb18f; }
+        .actions { margin-top: 18px; display: grid; gap: 9px; }
+        .primary { min-height: 50px; border: 0; border-radius: 16px; background: #e85d39; color: #fff; font-weight: 800; cursor: pointer; }
+        .secondary { min-height: 44px; border: 0; background: transparent; color: #7d7068; cursor: pointer; }
+        .error { margin-top: 100px; padding: 28px; text-align: center; }
+        .error a { color: #e85d39; }
+    </style>
+</head>
+<body>
+    <main class="app">
+        <div class="top">
+            <button class="back" onclick="history.back()" aria-label="返回">←</button>
+            <span class="safe">模拟付款完成 · 实际扣款 ¥0</span>
+        </div>
+
+        <div id="content">
+            <section class="hero">
+                <div class="clock">⏱</div>
+                <div class="eyebrow">付款前，最后问一次</div>
+                <h1>这单现在真的需要吗？</h1>
+                <p class="intro">不是劝你挨饿。只是把冲动外卖换成一顿更合适的饭，再看看真正能省多少钱和热量。</p>
+                <div class="order">
+                    <div class="row"><span class="muted">这笔外卖订单</span><strong>¥<span id="orderTotal">0.0</span></strong></div>
+                    <div class="row" style="margin-top:7px"><span class="muted" id="restaurantName"></span><span class="muted" id="orderCalories"></span></div>
+                </div>
+            </section>
+
+            <h2 class="section-title">如果不点，你准备吃什么？</h2>
+            <div class="alternatives" id="alternatives"></div>
+
+            <div class="custom" id="customFields">
+                <label>预计花费（元）<input id="customCost" type="number" min="0" step="0.1" value="12"></label>
+                <label>预计热量（kcal）<input id="customCalories" type="number" min="0" step="10" value="500"></label>
+            </div>
+
+            <div class="preview">
+                <div class="row"><span class="muted" style="color:#cfc5bf">按当前选择估算</span><strong id="moneyPreview"></strong></div>
+                <div class="row" style="margin-top:8px"><span class="muted" style="color:#cfc5bf">热量变化</span><span id="caloriePreview"></span></div>
+            </div>
+
+            <div class="actions">
+                <button class="primary" onclick="finishSkip()">这单不点了，看看结果</button>
+                <button class="secondary" onclick="history.back()">我再看看订单</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="app-state.js"></script>
+    <script>
+        const alternatives = [
+            { id: 'home', label: '家里简餐', detail: '约 ¥9 · 480 kcal', cost: 9, calories: 480, icon: '🍳' },
+            { id: 'canteen', label: '食堂 / 便利店', detail: '约 ¥16 · 560 kcal', cost: 16, calories: 560, icon: '🍱' },
+            { id: 'later', label: '晚点再决定', detail: '先按 ¥12 · 500 kcal 估算', cost: 12, calories: 500, icon: '🕐' },
+            { id: 'custom', label: '我自己填写', detail: '输入真实花费与大致热量', cost: 12, calories: 500, icon: '✎' }
+        ];
+        const pendingOrder = Chanlema.loadPendingOrder();
+        let selectedId = 'home';
+
+        function selectedAlternative() {
+            const selected = alternatives.find(item => item.id === selectedId) || alternatives[0];
+            if (selected.id !== 'custom') return selected;
+            return {
+                ...selected,
+                cost: Math.max(0, Number(document.getElementById('customCost').value || 0)),
+                calories: Math.max(0, Number(document.getElementById('customCalories').value || 0))
+            };
+        }
+
+        function renderAlternatives() {
+            document.getElementById('alternatives').innerHTML = alternatives.map(item => `
+                <button class="alternative ${item.id === selectedId ? 'selected' : ''}" onclick="chooseAlternative('${item.id}')">
+                    <span class="alt-icon">${item.icon}</span>
+                    <span class="alt-copy"><b>${item.label}</b><small>${item.detail}</small></span>
+                    <span class="radio"></span>
+                </button>
+            `).join('');
+            document.getElementById('customFields').classList.toggle('show', selectedId === 'custom');
+            updatePreview();
+        }
+
+        function chooseAlternative(id) {
+            selectedId = id;
+            renderAlternatives();
+        }
+
+        function updatePreview() {
+            if (!pendingOrder) return;
+            const alternative = selectedAlternative();
+            const calculation = pendingOrder.calculation;
+            const net = Chanlema.round(calculation.total - alternative.cost);
+            const low = calculation.caloriesLow - alternative.calories;
+            const high = calculation.caloriesHigh - alternative.calories;
+            document.getElementById('moneyPreview').textContent = net >= 0
+                ? `预计净省 ¥${net.toFixed(1)}`
+                : `预计多花 ¥${Math.abs(net).toFixed(1)}`;
+            if (low >= 0) {
+                document.getElementById('caloriePreview').textContent = `预计少 ${low}–${high} kcal`;
+            } else if (high <= 0) {
+                document.getElementById('caloriePreview').textContent = `预计多 ${Math.abs(high)}–${Math.abs(low)} kcal`;
+            } else {
+                document.getElementById('caloriePreview').textContent = `约 ${low}～+${high} kcal`;
+            }
+        }
+
+        function finishSkip() {
+            const alternative = selectedAlternative();
+            Chanlema.finishDecision(pendingOrder, alternative);
+            window.location.href = 'success.html';
+        }
+
+        function init() {
+            if (!pendingOrder || !pendingOrder.calculation) {
+                document.getElementById('content').innerHTML = '<div class="error"><h2>没有找到待确认订单</h2><p class="muted">请先选择商家和菜品。</p><a href="index.html">返回首页</a></div>';
+                return;
+            }
+            document.getElementById('orderTotal').textContent = pendingOrder.calculation.total.toFixed(1);
+            document.getElementById('restaurantName').textContent = pendingOrder.restaurant.name || '演示商家';
+            document.getElementById('orderCalories').textContent = `${pendingOrder.calculation.caloriesLow}–${pendingOrder.calculation.caloriesHigh} kcal`;
+            renderAlternatives();
+            document.getElementById('customCost').addEventListener('input', updatePreview);
+            document.getElementById('customCalories').addEventListener('input', updatePreview);
+        }
+
+        init();
+    </script>
+</body>
+</html>

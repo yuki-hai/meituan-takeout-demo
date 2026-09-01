@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商家详情</title>
+    <title>馋了吗 - 商家详情</title>
     <style>
         * {
             margin: 0;
@@ -391,6 +391,12 @@
             background: #ffb700;
         }
 
+        .checkout-btn:disabled {
+            background: #999;
+            color: #fff;
+            cursor: not-allowed;
+        }
+
         /* ===== Dish Popup ===== */
         .modal-overlay {
             display: none;
@@ -636,6 +642,7 @@
         <div class="modal" id="modal"></div>
     </div>
 
+    <script src="app-state.js"></script>
     <script>
         // 食物图片映射 - 使用 Spoonacular 食物 API
         const FOOD_IMAGES = {
@@ -657,6 +664,11 @@
                 deliveryTime: 30,
                 deliveryFee: 6,
                 minPrice: 20,
+                packagingFee: 0,
+                discountRules: [
+                    { threshold: 48, amount: 16 },
+                    { threshold: 30, amount: 11 }
+                ],
                 distance: 1.1,
                 image: FOOD_IMAGES.coffee,
                 imageType: 'img',
@@ -691,6 +703,8 @@
                 deliveryTime: 30,
                 deliveryFee: 3.1,
                 minPrice: 20,
+                packagingFee: 0,
+                discountRules: [{ threshold: 35, amount: 5 }],
                 distance: 5.2,
                 image: FOOD_IMAGES.rice,
                 imageType: 'img',
@@ -712,6 +726,8 @@
                 deliveryTime: 25,
                 deliveryFee: 4,
                 minPrice: 25,
+                packagingFee: 0,
+                discountRules: [{ threshold: 50, amount: 10 }],
                 distance: 2.1,
                 image: FOOD_IMAGES.hotpot,
                 imageType: 'img',
@@ -727,9 +743,7 @@
         };
 
         let currentRestaurant = null;
-        let cart = {
-            items: []
-        };
+        let cart = Chanlema.emptyCart();
 
         function init() {
             const overlay = document.getElementById('modalOverlay');
@@ -749,10 +763,22 @@
                 return;
             }
 
+            const storedCart = Chanlema.loadCart();
+            if (storedCart.restaurant && Number(storedCart.restaurant.id) === Number(currentRestaurant.id)) {
+                cart = storedCart;
+                cart.restaurant = {
+                    id: currentRestaurant.id,
+                    name: currentRestaurant.name,
+                    deliveryFee: currentRestaurant.deliveryFee,
+                    packagingFee: currentRestaurant.packagingFee,
+                    minPrice: currentRestaurant.minPrice,
+                    discountRules: currentRestaurant.discountRules
+                };
+                Chanlema.saveCart(cart);
+            }
+
             renderRestaurant();
         }
-
-        init();
 
         function renderRestaurant() {
             const r = currentRestaurant;
@@ -786,7 +812,9 @@
                 <div class="dish-category" id="category-${i}">
                     <div class="dish-category-title">${cat.name}</div>
                     ${cat.dishes.map(dish => {
-                        const count = cart.items.find(item => item.id === dish.id)?.count || 0;
+                        const count = cart.items
+                            .filter(item => Number(item.id) === Number(dish.id))
+                            .reduce((sum, item) => sum + Number(item.count || 0), 0);
                         return `
                             <div class="dish-item">
                                 <div class="dish-img" style="background: url('${dish.image}') center/cover;"></div>
@@ -797,7 +825,7 @@
                                     <div class="dish-footer">
                                         <div class="dish-price">${dish.price}</div>
                                         <div class="dish-controls">
-                                            ${count > 0 ? `<button class="dish-btn dish-btn-minus" onclick="removeDish(${dish.id}); renderRestaurant();">−</button>` : ''}
+                                            ${count > 0 ? `<button class="dish-btn dish-btn-minus" onclick="removeDish(${dish.id})">−</button>` : ''}
                                             ${count > 0 ? `<span class="dish-count show" id="count-${dish.id}">${count}</span>` : ''}
                                             <button class="dish-btn dish-btn-plus" onclick="showDishModal(${dish.id})">+</button>
                                         </div>
@@ -911,6 +939,7 @@
             const modal = document.getElementById('modal');
             modal.dataset.basePrice = dish.price;
             modal.dataset.originalPrice = dish.originalPrice;
+            modal.dataset.selectedPrice = Number(dish.price).toFixed(2);
 
             modal.innerHTML = `
                 <div class="modal-header">
@@ -944,35 +973,29 @@
         }
 
         function updateModalPrice() {
-            // 获取 modal 上保存的原始价格和菜品信息
             const modal = document.getElementById('modal');
-            const originalPrice = parseFloat(modal.dataset.originalPrice);
             const basePrice = parseFloat(modal.dataset.basePrice);
-
-            // 获取当前选中的规格
-            const allSpecOptions = document.querySelectorAll('.spec-option.selected');
+            const allSpecOptions = modal.querySelectorAll('.spec-option.selected');
             let priceAdjustment = 0;
 
-            // 根据规格调整价格
             allSpecOptions.forEach(option => {
                 const text = option.textContent;
                 if (text.includes('加量') || text.includes('大杯')) {
-                    priceAdjustment += 5; // 加量或大杯加5块钱
+                    priceAdjustment += 5;
                 } else if (text.includes('加冰')) {
-                    priceAdjustment += 1; // 加冰加1块钱
+                    priceAdjustment += 1;
                 }
             });
 
             const newPrice = basePrice + priceAdjustment;
-            const priceDisplay = document.querySelector('.price-value');
+            modal.dataset.selectedPrice = newPrice.toFixed(2);
+            const priceDisplay = modal.querySelector('.price-value');
             if (priceDisplay) {
                 priceDisplay.textContent = newPrice.toFixed(1);
             }
         }
 
         function addToCart(dishId) {
-            console.log('Adding dish to cart:', dishId);
-
             let dish = null;
             for (const cat of currentRestaurant.categories) {
                 const found = cat.dishes.find(d => d.id === dishId);
@@ -982,59 +1005,59 @@
                 }
             }
 
-            if (!dish) {
-                console.error('Dish not found:', dishId);
-                return;
-            }
+            if (!dish) return;
 
-            console.log('Found dish:', dish);
-
-            const item = cart.items.find(i => i.id === dishId);
+            const modal = document.getElementById('modal');
+            const specs = Array.from(modal.querySelectorAll('.spec-group')).map(group => {
+                const title = group.querySelector('.spec-title')?.textContent.trim() || '规格';
+                const value = group.querySelector('.spec-option.selected')?.textContent.trim() || '默认';
+                return `${title}：${value}`;
+            });
+            const selectedPrice = Number(modal.dataset.selectedPrice || modal.dataset.basePrice || dish.price);
+            const isLargerPortion = specs.some(spec => spec.includes('大杯') || spec.includes('加量'));
+            const selectedCalories = Math.round(dish.calories * (isLargerPortion ? 1.2 : 1));
+            const variantKey = `${dishId}|${specs.join('|')}`;
+            const item = cart.items.find(i => i.variantKey === variantKey);
             if (item) {
                 item.count += 1;
             } else {
                 cart.items.push({
                     id: dishId,
+                    variantKey,
                     name: dish.name,
-                    price: dish.price,
-                    calories: dish.calories,
+                    price: selectedPrice,
+                    calories: selectedCalories,
+                    specs,
                     count: 1
                 });
             }
 
-            console.log('Cart items:', cart.items);
-
-            // 保存到 localStorage
-            const cartData = {
-                items: cart.items,
-                restaurant: {
-                    id: currentRestaurant.id,
-                    name: currentRestaurant.name
-                }
+            cart.restaurant = {
+                id: currentRestaurant.id,
+                name: currentRestaurant.name,
+                deliveryFee: currentRestaurant.deliveryFee,
+                packagingFee: currentRestaurant.packagingFee,
+                minPrice: currentRestaurant.minPrice,
+                discountRules: currentRestaurant.discountRules
             };
-            localStorage.setItem('cart', JSON.stringify(cartData));
-            console.log('Saved to localStorage:', cartData);
+            Chanlema.saveCart(cart);
 
-            // 关闭弹窗
             const overlay = document.getElementById('modalOverlay');
-            const modal = document.getElementById('modal');
             if (overlay) overlay.classList.remove('active');
             if (modal) modal.innerHTML = '';
 
-            // 更新显示
-            setTimeout(() => {
-                renderRestaurant();
-            }, 100);
+            renderRestaurant();
         }
 
         function removeDish(dishId) {
-            const item = cart.items.find(i => i.id === dishId);
+            const item = [...cart.items].reverse().find(i => Number(i.id) === Number(dishId));
             if (item && item.count > 0) {
                 item.count -= 1;
                 if (item.count === 0) {
-                    cart.items = cart.items.filter(i => i.id !== dishId);
+                    cart.items = cart.items.filter(i => i.variantKey !== item.variantKey);
                 }
             }
+            Chanlema.saveCart(cart);
             updateCartDisplay();
         }
 
@@ -1043,16 +1066,20 @@
         }
 
         function updateCartBar() {
-            const totalCount = cart.items.reduce((sum, item) => sum + item.count, 0);
-            const totalPrice = cart.items.reduce((sum, item) => sum + item.price * item.count, 0);
+            const order = Chanlema.calculateOrder(cart, 'delivery');
             const cartBar = document.getElementById('cartBar');
+            const checkoutButton = cartBar.querySelector('.checkout-btn');
 
-            if (totalCount === 0) {
+            if (order.itemCount === 0) {
                 cartBar.style.display = 'none';
             } else {
                 cartBar.style.display = 'flex';
-                document.getElementById('cartBadge').textContent = totalCount;
-                document.getElementById('cartTotal').textContent = (totalPrice + currentRestaurant.deliveryFee).toFixed(2);
+                document.getElementById('cartBadge').textContent = order.itemCount;
+                document.getElementById('cartTotal').textContent = order.total.toFixed(2);
+                checkoutButton.disabled = !order.canCheckout;
+                checkoutButton.textContent = order.canCheckout
+                    ? '去结算'
+                    : `差¥${order.amountToMinimum.toFixed(1)}起送`;
             }
         }
 
@@ -1063,23 +1090,16 @@
         }
 
         function showCart() {
-            alert('购物车详情页开发中');
+            goToCheckout();
         }
 
         function goToCheckout() {
-            if (cart.items.length === 0) {
-                alert('购物车为空');
+            const order = Chanlema.calculateOrder(cart, 'delivery');
+            if (!order.canCheckout) {
+                alert(order.itemCount === 0 ? '购物车为空' : `还差 ¥${order.amountToMinimum.toFixed(1)} 起送`);
                 return;
             }
-            // 保存购物车数据
-            const cartData = {
-                items: cart.items,
-                restaurant: {
-                    id: currentRestaurant.id,
-                    name: currentRestaurant.name
-                }
-            };
-            localStorage.setItem('cart', JSON.stringify(cartData));
+            Chanlema.saveCart(cart);
             window.location.href = 'cart.html';
         }
 
