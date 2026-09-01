@@ -738,9 +738,7 @@
                     closeModal();
                 }
             });
-        }
 
-        window.addEventListener('DOMContentLoaded', init);
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
 
@@ -753,6 +751,8 @@
 
             renderRestaurant();
         }
+
+        init();
 
         function renderRestaurant() {
             const r = currentRestaurant;
