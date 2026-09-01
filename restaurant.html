@@ -831,6 +831,8 @@
         }
 
         function addToCart(dishId) {
+            console.log('Adding dish to cart:', dishId);
+
             let dish = null;
             for (const cat of currentRestaurant.categories) {
                 const found = cat.dishes.find(d => d.id === dishId);
@@ -840,7 +842,12 @@
                 }
             }
 
-            if (!dish) return;
+            if (!dish) {
+                console.error('Dish not found:', dishId);
+                return;
+            }
+
+            console.log('Found dish:', dish);
 
             const item = cart.items.find(i => i.id === dishId);
             if (item) {
@@ -854,6 +861,8 @@
                 });
             }
 
+            console.log('Cart items:', cart.items);
+
             // 保存到 localStorage
             const cartData = {
                 items: cart.items,
@@ -863,9 +872,15 @@
                 }
             };
             localStorage.setItem('cart', JSON.stringify(cartData));
+            console.log('Saved to localStorage:', cartData);
 
-            closeModal();
-            updateCartDisplay();
+            // 关闭弹窗
+            document.getElementById('modalOverlay').classList.remove('active');
+
+            // 更新显示
+            setTimeout(() => {
+                renderRestaurant();
+            }, 100);
         }
 
         function removeDish(dishId) {
