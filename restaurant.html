@@ -632,7 +632,7 @@
         </div>
 
         <!-- Modal -->
-        <div class="modal-overlay" id="modalOverlay" onclick="if(event.target === this) closeModal()"></div>
+        <div class="modal-overlay" id="modalOverlay"></div>
         <div class="modal" id="modal"></div>
     </div>
 
@@ -732,6 +732,15 @@
         };
 
         function init() {
+            const overlay = document.getElementById('modalOverlay');
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
 
@@ -923,16 +932,9 @@
             document.getElementById('modalOverlay').classList.add('active');
 
             // 绑定关闭按钮事件
-            setTimeout(() => {
-                const closeBtn = document.getElementById('modalCloseBtn');
-                if (closeBtn) {
-                    closeBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        closeModal();
-                    }, true); // 捕获阶段
-                }
-            }, 0);
+            document.querySelectorAll('.modal-close-btn').forEach(btn => {
+                btn.onclick = closeModal;
+            });
         }
 
         function selectSpec(el) {
@@ -1054,11 +1056,9 @@
         }
 
         function closeModal() {
-            console.log('Closing modal');
-            const overlay = document.getElementById('modalOverlay');
-            if (overlay) {
-                overlay.classList.remove('active');
-            }
+            console.log('closeModal called');
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.getElementById('modal').innerHTML = '';
         }
 
         function showCart() {
