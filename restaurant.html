@@ -422,6 +422,7 @@
             overflow-y: auto;
             z-index: 201;
             animation: slideUp 0.3s ease-out;
+            pointer-events: auto;
         }
 
         @keyframes slideUp {
@@ -905,7 +906,7 @@
             modal.innerHTML = `
                 <div class="modal-header">
                     <div class="modal-title">${dish.name}</div>
-                    <button class="modal-close-btn" onclick="event.stopPropagation(); closeModal();">×</button>
+                    <button class="modal-close-btn" id="modalCloseBtn">×</button>
                 </div>
                 <div class="modal-content">
                     ${specsHTML}
@@ -920,6 +921,18 @@
             `;
 
             document.getElementById('modalOverlay').classList.add('active');
+
+            // 绑定关闭按钮事件
+            setTimeout(() => {
+                const closeBtn = document.getElementById('modalCloseBtn');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        closeModal();
+                    }, true); // 捕获阶段
+                }
+            }, 0);
         }
 
         function selectSpec(el) {
