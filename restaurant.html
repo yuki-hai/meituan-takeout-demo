@@ -875,7 +875,10 @@
             console.log('Saved to localStorage:', cartData);
 
             // 关闭弹窗
-            document.getElementById('modalOverlay').classList.remove('active');
+            const overlay = document.getElementById('modalOverlay');
+            const modal = document.getElementById('modal');
+            if (overlay) overlay.classList.remove('active');
+            if (modal) modal.innerHTML = '';
 
             // 更新显示
             setTimeout(() => {
@@ -913,7 +916,11 @@
         }
 
         function closeModal() {
-            document.getElementById('modalOverlay').classList.remove('active');
+            console.log('Closing modal');
+            const overlay = document.getElementById('modalOverlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
         }
 
         function showCart() {
