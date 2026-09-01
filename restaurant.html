@@ -894,7 +894,7 @@
             modal.innerHTML = `
                 <div class="modal-header">
                     <div class="modal-title">${dish.name}</div>
-                    <button class="modal-close-btn" onclick="closeModal()">×</button>
+                    <button class="modal-close-btn" onclick="event.stopPropagation(); closeModal();">×</button>
                 </div>
                 <div class="modal-content">
                     ${specsHTML}
