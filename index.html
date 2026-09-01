@@ -217,7 +217,16 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 140px;
+            min-height: 164px;
+        }
+
+        .promotion-card-image {
+            width: 100%;
+            height: 76px;
+            margin-bottom: 9px;
+            border-radius: 9px;
+            background-position: center;
+            background-size: cover;
         }
 
         .promotion-card:active {
@@ -289,7 +298,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
+            background-position: center;
+            background-size: cover;
             position: relative;
         }
 
@@ -539,8 +549,8 @@
         ];
 
         const PROMOTIONS = [
-            { id: 1, title: '葛香江阁（张江山东小炒鸡）', price: '¥22.1', desc: '免配送费' },
-            { id: 2, title: '大宝口福·牛羊牛腩牛杂堡单人套', price: '¥23.9', desc: '低至3.4折' }
+            { id: 1, title: '双杯咖啡组合', price: '¥22.1', desc: '免配送费', image: 'assets/food/coffee-shop.webp' },
+            { id: 2, title: '招牌猪脚饭套餐', price: '¥23.9', desc: '低至3.4折', image: 'assets/food/pork-trotter-rice.webp' }
         ];
 
         const RESTAURANTS = [
@@ -552,7 +562,7 @@
                 deliveryTime: 30,
                 deliveryFee: 6,
                 minPrice: 20,
-                image: '☕',
+                image: 'assets/food/coffee-shop.webp',
                 tags: ['月售1000+', '堂食店'],
                 activities: ['满30减11', '满48减16']
             },
@@ -564,7 +574,7 @@
                 deliveryTime: 30,
                 deliveryFee: 3.1,
                 minPrice: 20,
-                image: '🍱',
+                image: 'assets/food/pork-trotter-rice.webp',
                 tags: ['月售1000+', '演示外送'],
                 activities: ['满35减5']
             },
@@ -576,7 +586,7 @@
                 deliveryTime: 25,
                 deliveryFee: 4,
                 minPrice: 25,
-                image: '🍲',
+                image: 'assets/food/spicy-hotpot.webp',
                 tags: ['品牌连锁', '堂食店'],
                 activities: ['满50减10']
             }
@@ -622,6 +632,7 @@
             const carousel = document.getElementById('promotionCarousel');
             carousel.innerHTML = PROMOTIONS.map(promo => `
                 <div class="promotion-card" onclick="goToRestaurant(${promo.id})">
+                    <div class="promotion-card-image" style="background-image:url('${promo.image}')"></div>
                     <div class="promotion-card-title">${promo.title}</div>
                     <div class="promotion-card-desc">${promo.desc}</div>
                     <div class="promotion-card-price">${promo.price}</div>
@@ -644,8 +655,7 @@
                 </div>
                 ${list.length ? list.map(r => `
                     <div class="restaurant-card" onclick="goToRestaurant(${r.id})">
-                        <div class="restaurant-header-img">
-                            ${r.image}
+                        <div class="restaurant-header-img" style="background-image:url('${r.image}')">
                             <div class="restaurant-badge">限时</div>
                         </div>
                         <div class="restaurant-info">

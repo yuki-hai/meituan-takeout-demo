@@ -10,6 +10,16 @@ const pages = [
     'success.html',
     'history.html'
 ];
+const foodAssets = [
+    'assets/food/coffee-shop.webp',
+    'assets/food/iced-americano.webp',
+    'assets/food/butter-croissant.webp',
+    'assets/food/pork-trotter-rice.webp',
+    'assets/food/chicken-rice.webp',
+    'assets/food/spicy-hotpot.webp'
+];
+
+foodAssets.forEach(asset => assert.ok(fs.existsSync(asset), `missing food photo: ${asset}`));
 
 for (const page of pages) {
     const html = fs.readFileSync(page, 'utf8');

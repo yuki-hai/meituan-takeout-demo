@@ -644,15 +644,14 @@
 
     <script src="app-state.js"></script>
     <script>
-        // 食物图片映射 - 使用 Spoonacular 食物 API
+        // 项目内置的写实食物图，避免外链失效。
         const FOOD_IMAGES = {
-            coffee: 'https://spoonacular.com/cdn/ingredients_500x500/brewed-coffee.jpg',
-            americano: 'https://spoonacular.com/cdn/ingredients_500x500/coffee.jpg',
-            croissant: 'https://spoonacular.com/cdn/ingredients_500x500/croissants.jpg',
-            rice: 'https://spoonacular.com/cdn/ingredients_500x500/rice-white-long-grain-raw.jpg',
-            noodles: 'https://spoonacular.com/cdn/ingredients_500x500/noodles.jpg',
-            hotpot: 'https://spoonacular.com/cdn/ingredients_500x500/hot-sauce.jpg',
-            tea: 'https://spoonacular.com/cdn/ingredients_500x500/black-tea.jpg'
+            coffee: 'assets/food/coffee-shop.webp',
+            americano: 'assets/food/iced-americano.webp',
+            croissant: 'assets/food/butter-croissant.webp',
+            porkRice: 'assets/food/pork-trotter-rice.webp',
+            chickenRice: 'assets/food/chicken-rice.webp',
+            hotpot: 'assets/food/spicy-hotpot.webp'
         };
 
         const RESTAURANTS_DATA = {
@@ -706,14 +705,14 @@
                 packagingFee: 0,
                 discountRules: [{ threshold: 35, amount: 5 }],
                 distance: 5.2,
-                image: FOOD_IMAGES.rice,
+                image: FOOD_IMAGES.porkRice,
                 imageType: 'img',
                 categories: [
                     {
                         name: '热销推荐',
                         dishes: [
-                            { id: 201, name: '猪脚饭', desc: '酥脆美味', price: 16, originalPrice: 28, sales: 200, calories: 650, image: FOOD_IMAGES.rice },
-                            { id: 202, name: '鸡腿饭', desc: '嫩滑鲜香', price: 14, originalPrice: 24, sales: 180, calories: 580, image: FOOD_IMAGES.rice }
+                            { id: 201, name: '猪脚饭', desc: '软糯入味', price: 16, originalPrice: 28, sales: 200, calories: 650, image: FOOD_IMAGES.porkRice },
+                            { id: 202, name: '鸡腿饭', desc: '嫩滑鲜香', price: 14, originalPrice: 24, sales: 180, calories: 580, image: FOOD_IMAGES.chickenRice }
                         ]
                     }
                 ]
