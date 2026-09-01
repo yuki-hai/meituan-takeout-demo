@@ -813,6 +813,80 @@
 
             if (!dish) return;
 
+            // 根据菜品ID判断菜品类型，显示不同的规格选项
+            let specsHTML = '';
+
+            // 咖啡类（ID 100-199）- 显示温度选项
+            if (dishId >= 100 && dishId < 200) {
+                specsHTML = `
+                    <div class="spec-group">
+                        <div class="spec-title">份量</div>
+                        <div class="spec-options">
+                            <div class="spec-option selected" onclick="selectSpec(this)">中杯</div>
+                            <div class="spec-option" onclick="selectSpec(this)">大杯</div>
+                        </div>
+                    </div>
+                    <div class="spec-group">
+                        <div class="spec-title">温度</div>
+                        <div class="spec-options">
+                            <div class="spec-option selected" onclick="selectSpec(this)">常温</div>
+                            <div class="spec-option" onclick="selectSpec(this)">冷</div>
+                            <div class="spec-option" onclick="selectSpec(this)">加冰</div>
+                        </div>
+                    </div>
+                `;
+            }
+            // 米饭类（ID 200-299）- 显示份量选项，不显示温度
+            else if (dishId >= 200 && dishId < 300) {
+                specsHTML = `
+                    <div class="spec-group">
+                        <div class="spec-title">份量</div>
+                        <div class="spec-options">
+                            <div class="spec-option selected" onclick="selectSpec(this)">标准份</div>
+                            <div class="spec-option" onclick="selectSpec(this)">加量</div>
+                        </div>
+                    </div>
+                    <div class="spec-group">
+                        <div class="spec-title">配菜</div>
+                        <div class="spec-options">
+                            <div class="spec-option selected" onclick="selectSpec(this)">不要葱</div>
+                            <div class="spec-option" onclick="selectSpec(this)">不要辣</div>
+                        </div>
+                    </div>
+                `;
+            }
+            // 火锅类（ID 300-399）
+            else if (dishId >= 300 && dishId < 400) {
+                specsHTML = `
+                    <div class="spec-group">
+                        <div class="spec-title">辣度</div>
+                        <div class="spec-options">
+                            <div class="spec-option selected" onclick="selectSpec(this)">中辣</div>
+                            <div class="spec-option" onclick="selectSpec(this)">微辣</div>
+                            <div class="spec-option" onclick="selectSpec(this)">超辣</div>
+                        </div>
+                    </div>
+                    <div class="spec-group">
+                        <div class="spec-title">汤底</div>
+                        <div class="spec-options">
+                            <div class="spec-option selected" onclick="selectSpec(this)">红汤</div>
+                            <div class="spec-option" onclick="selectSpec(this)">清汤</div>
+                        </div>
+                    </div>
+                `;
+            }
+            // 默认选项
+            else {
+                specsHTML = `
+                    <div class="spec-group">
+                        <div class="spec-title">份量</div>
+                        <div class="spec-options">
+                            <div class="spec-option selected" onclick="selectSpec(this)">标准</div>
+                        </div>
+                    </div>
+                `;
+            }
+
             const modal = document.getElementById('modal');
             modal.innerHTML = `
                 <div class="modal-header">
@@ -820,20 +894,7 @@
                     <button class="modal-close-btn" onclick="closeModal()">×</button>
                 </div>
                 <div class="modal-content">
-                    <div class="spec-group">
-                        <div class="spec-title">份量</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">默认</div>
-                        </div>
-                    </div>
-                    <div class="spec-group">
-                        <div class="spec-title">温度</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">常温</div>
-                            <div class="spec-option" onclick="selectSpec(this)">冰</div>
-                            <div class="spec-option" onclick="selectSpec(this)">加冰</div>
-                        </div>
-                    </div>
+                    ${specsHTML}
                 </div>
                 <div class="modal-footer">
                     <div class="price-display">
