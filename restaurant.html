@@ -59,7 +59,7 @@
         /* ===== Restaurant Header ===== */
         .restaurant-header {
             height: 200px;
-            background: linear-gradient(135deg, #FFE5B4 0%, #FFDAB9 100%);
+            background: linear-gradient(135deg, #FFE5B4 0%, #FFDAB9 100%) center/cover;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -214,7 +214,7 @@
             width: 80px;
             height: 80px;
             border-radius: 8px;
-            background: #f0f0f0;
+            background: #f0f0f0 center/cover no-repeat;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -625,6 +625,13 @@
     </div>
 
     <script>
+        // 食物图片关键词映射
+        const FOOD_IMAGES = {
+            coffee: 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=400&h=400&fit=crop',
+            rice: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop',
+            hotpot: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop'
+        };
+
         const RESTAURANTS_DATA = {
             1: {
                 id: 1,
@@ -635,7 +642,8 @@
                 deliveryFee: 6,
                 minPrice: 20,
                 distance: 1.1,
-                image: '☕',
+                image: FOOD_IMAGES.coffee,
+                imageType: 'img',
                 categories: [
                     {
                         name: '热销推荐',
@@ -668,7 +676,8 @@
                 deliveryFee: 3.1,
                 minPrice: 20,
                 distance: 5.2,
-                image: '🍱',
+                image: FOOD_IMAGES.rice,
+                imageType: 'img',
                 categories: [
                     {
                         name: '热销推荐',
@@ -688,7 +697,8 @@
                 deliveryFee: 4,
                 minPrice: 25,
                 distance: 2.1,
-                image: '🍲',
+                image: FOOD_IMAGES.hotpot,
+                imageType: 'img',
                 categories: [
                     {
                         name: '热锅',
@@ -722,7 +732,15 @@
         function renderRestaurant() {
             const r = currentRestaurant;
 
-            document.getElementById('restaurantImage').textContent = r.image;
+            const imgElement = document.getElementById('restaurantImage');
+            if (r.imageType === 'img') {
+                imgElement.style.backgroundImage = `url('${r.image}')`;
+                imgElement.style.backgroundSize = 'cover';
+                imgElement.style.backgroundPosition = 'center';
+                imgElement.textContent = '';
+            } else {
+                imgElement.textContent = r.image;
+            }
             document.getElementById('restaurantName').textContent = r.name;
             document.getElementById('restaurantRating').textContent = r.rating;
             document.getElementById('restaurantSales').textContent = r.sales > 999 ? '1000+' : r.sales;
@@ -746,7 +764,7 @@
                         const count = cart.items.find(item => item.id === dish.id)?.count || 0;
                         return `
                             <div class="dish-item">
-                                <div class="dish-img">🍽️</div>
+                                <div class="dish-img" style="background: url('${FOOD_IMAGES.coffee}') center/cover;"></div>
                                 <div class="dish-info">
                                     <div class="dish-name">${dish.name}</div>
                                     <div class="dish-desc">${dish.desc}</div>
@@ -755,7 +773,7 @@
                                         <div class="dish-price">${dish.price}</div>
                                         <div class="dish-controls">
                                             ${count > 0 ? `<button class="dish-btn dish-btn-minus" onclick="removeDish(${dish.id}); renderRestaurant();">−</button>` : ''}
-                                            <span class="dish-count ${count > 0 ? 'show' : ''}" id="count-${dish.id}">${count}</span>
+                                            ${count > 0 ? `<span class="dish-count show" id="count-${dish.id}">${count}</span>` : ''}
                                             <button class="dish-btn dish-btn-plus" onclick="showDishModal(${dish.id})">+</button>
                                         </div>
                                     </div>
