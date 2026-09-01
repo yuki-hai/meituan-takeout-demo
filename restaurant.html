@@ -451,10 +451,21 @@
         }
 
         .modal-close-btn {
-            background: none;
+            background: #f0f0f0;
             border: none;
-            font-size: 24px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 20px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .modal-close-btn:active {
+            background: #ddd;
         }
 
         .modal-content {
