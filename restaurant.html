@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商家详情</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+        }
+
+        /* ===== Header ===== */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #fff;
+            border-bottom: 1px solid #f0f0f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* ===== Restaurant Header ===== */
+        .restaurant-header {
+            height: 200px;
+            background: linear-gradient(135deg, #FFE5B4 0%, #FFDAB9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            position: relative;
+        }
+
+        .restaurant-info-card {
+            background: #fff;
+            margin: 0 12px;
+            padding: 16px;
+            border-radius: 12px;
+            position: relative;
+            top: -40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .restaurant-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .restaurant-rating {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+
+        .rating-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .rating-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .restaurant-delivery-info {
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            padding-top: 8px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ===== Tab Navigation ===== */
+        .nav-tabs {
+            display: flex;
+            background: #fff;
+            border-bottom: 1px solid #f0f0f0;
+            margin-top: 12px;
+            padding: 0 16px;
+            gap: 24px;
+            overflow-x: auto;
+        }
+
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-tab {
+            background: none;
+            border: none;
+            font-size: 14px;
+            color: #999;
+            padding: 12px 0;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            color: #333;
+            font-weight: 600;
+            border-bottom-color: #FFC300;
+        }
+
+        /* ===== Content Area ===== */
+        .content {
+            display: flex;
+            height: calc(100vh - 400px);
+            background: #fff;
+            gap: 0;
+        }
+
+        .sidebar {
+            width: 100px;
+            background: #f9f9f9;
+            border-right: 1px solid #f0f0f0;
+            overflow-y: auto;
+        }
+
+        .sidebar-item {
+            padding: 12px 8px;
+            font-size: 13px;
+            text-align: center;
+            color: #666;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .sidebar-item.active {
+            background: #fff;
+            color: #333;
+            font-weight: 600;
+            border-left-color: #FFC300;
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .dish-category {
+            margin-bottom: 24px;
+        }
+
+        .dish-category-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            padding: 8px 0;
+            margin-bottom: 12px;
+        }
+
+        .dish-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .dish-item:last-child {
+            border-bottom: none;
+        }
+
+        .dish-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .dish-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .dish-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .dish-desc {
+            font-size: 12px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .dish-meta {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .dish-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .dish-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FF4D4F;
+        }
+
+        .dish-price::before {
+            content: '¥';
+            font-size: 12px;
+        }
+
+        .dish-controls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            padding: 2px 4px;
+        }
+
+        .dish-btn {
+            background: none;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dish-btn-minus {
+            color: #999;
+        }
+
+        .dish-btn-plus {
+            background: #FFC300;
+            color: #333;
+        }
+
+        .dish-count {
+            min-width: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: #333;
+            display: none;
+        }
+
+        .dish-count.show {
+            display: block;
+        }
+
+        /* ===== Cart Bar ===== */
+        .cart-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 480px;
+            margin: 0 auto;
+            background: #333;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            gap: 12px;
+            z-index: 50;
+        }
+
+        .cart-icon {
+            width: 50px;
+            height: 50px;
+            background: #FFC300;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            position: relative;
+            cursor: pointer;
+            margin-top: -20px;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #FF4D4F;
+            color: #fff;
+            font-size: 11px;
+            min-width: 22px;
+            height: 22px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-info {
+            flex: 1;
+            color: #fff;
+        }
+
+        .cart-total {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .cart-total::before {
+            content: '¥';
+            font-size: 12px;
+        }
+
+        .cart-fee {
+            font-size: 11px;
+            color: #ccc;
+            margin-top: 2px;
+        }
+
+        .checkout-btn {
+            background: #FFC300;
+            color: #333;
+            border: none;
+            padding: 0 18px;
+            height: 40px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .checkout-btn:active {
+            background: #ffb700;
+        }
+
+        /* ===== Dish Popup ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .modal-overlay.active {
+            display: block;
+        }
+
+        .modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 480px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px 16px 0 0;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 201;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .modal-content {
+            padding: 16px;
+        }
+
+        .spec-group {
+            margin-bottom: 20px;
+        }
+
+        .spec-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .spec-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .spec-option {
+            background: #f5f5f5;
+            border: 1px solid transparent;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .spec-option.selected {
+            background: #FFC300;
+            color: #333;
+            border-color: #FFC300;
+        }
+
+        .spec-price {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            sticky;
+            bottom: 0;
+            background: #fff;
+        }
+
+        .price-display {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .price-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 2px;
+        }
+
+        .price-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FF4D4F;
+        }
+
+        .price-value::before {
+            content: '¥';
+            font-size: 14px;
+        }
+
+        .add-cart-btn {
+            background: #FFC300;
+            color: #333;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <div class="top-bar-actions">
+                <button class="icon-btn">🔍</button>
+                <button class="icon-btn">★</button>
+                <button class="icon-btn">⋮</button>
+            </div>
+        </div>
+
+        <!-- Restaurant Header -->
+        <div class="restaurant-header" id="restaurantImage"></div>
+
+        <div class="restaurant-info-card">
+            <div class="restaurant-name" id="restaurantName"></div>
+            <div class="restaurant-rating">
+                <div class="rating-item">
+                    <span class="rating-value" id="restaurantRating"></span>
+                    <span>评分</span>
+                </div>
+                <div class="rating-item">
+                    <span class="rating-value" id="restaurantSales"></span>
+                    <span>月售</span>
+                </div>
+                <div class="rating-item">
+                    <span class="rating-value" id="restaurantDistance"></span>
+                    <span>km</span>
+                </div>
+            </div>
+            <div class="restaurant-delivery-info">
+                <div class="info-item">
+                    <span>起送</span>
+                    <span id="minPrice"></span>
+                </div>
+                <div class="info-item">
+                    <span>配送</span>
+                    <span id="deliveryFee"></span>
+                </div>
+                <div class="info-item">
+                    <span id="deliveryTime"></span>
+                    <span>分钟</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nav Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active">点菜</button>
+            <button class="nav-tab">评价</button>
+            <button class="nav-tab">商家</button>
+        </div>
+
+        <!-- Content -->
+        <div class="content" style="height: calc(100vh - 380px); margin-bottom: 60px;">
+            <div class="sidebar" id="sidebar"></div>
+            <div class="main-content" id="mainContent"></div>
+        </div>
+
+        <!-- Cart Bar -->
+        <div class="cart-bar" id="cartBar" style="display: none;">
+            <div class="cart-icon" onclick="showCart()">
+                🛒
+                <div class="cart-badge" id="cartBadge">0</div>
+            </div>
+            <div class="cart-info">
+                <div class="cart-total" id="cartTotal">0</div>
+                <div class="cart-fee">含配送费</div>
+            </div>
+            <button class="checkout-btn" onclick="goToCheckout()">去结算</button>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+        <div class="modal" id="modal"></div>
+    </div>
+
+    <script>
+        const RESTAURANTS_DATA = {
+            1: {
+                id: 1,
+                name: '瑞幸咖啡(浦东软件园亮秀路店)',
+                rating: 4.3,
+                sales: 1000,
+                deliveryTime: 30,
+                deliveryFee: 6,
+                minPrice: 20,
+                distance: 1.1,
+                image: '☕',
+                categories: [
+                    {
+                        name: '热销推荐',
+                        dishes: [
+                            { id: 101, name: '全冰小黄油美式', desc: '冰爽畅快', price: 13.9, originalPrice: 24, sales: 100 },
+                            { id: 102, name: '甜蜜杯咖啡', desc: '香甜顺滑', price: 16.9, originalPrice: 28, sales: 80 }
+                        ]
+                    },
+                    {
+                        name: '咖啡',
+                        dishes: [
+                            { id: 103, name: '美式咖啡', desc: '经典黑咖啡', price: 9.9, originalPrice: 18, sales: 120 },
+                            { id: 104, name: '拿铁', desc: '香浓奶香', price: 12.9, originalPrice: 22, sales: 110 }
+                        ]
+                    },
+                    {
+                        name: '小食',
+                        dishes: [
+                            { id: 105, name: '法式羊角包', desc: '酥脆可口', price: 8.9, originalPrice: 15, sales: 90 }
+                        ]
+                    }
+                ]
+            },
+            2: {
+                id: 2,
+                name: '沙县小吃·隆江猪脚板',
+                rating: 4.8,
+                sales: 1000,
+                deliveryTime: 30,
+                deliveryFee: 3.1,
+                minPrice: 20,
+                distance: 5.2,
+                image: '🍱',
+                categories: [
+                    {
+                        name: '热销推荐',
+                        dishes: [
+                            { id: 201, name: '猪脚饭', desc: '酥脆美味', price: 16, originalPrice: 28, sales: 200 },
+                            { id: 202, name: '鸡腿饭', desc: '嫩滑鲜香', price: 14, originalPrice: 24, sales: 180 }
+                        ]
+                    }
+                ]
+            },
+            3: {
+                id: 3,
+                name: '呷哺呷哺(罗山路店)',
+                rating: 4.5,
+                sales: 800,
+                deliveryTime: 25,
+                deliveryFee: 4,
+                minPrice: 25,
+                distance: 2.1,
+                image: '🍲',
+                categories: [
+                    {
+                        name: '热锅',
+                        dishes: [
+                            { id: 301, name: '麻辣锅底', desc: '麻辣鲜香', price: 18, originalPrice: 32, sales: 150 }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        let currentRestaurant = null;
+        let cart = {
+            items: []
+        };
+
+        function init() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+
+            currentRestaurant = RESTAURANTS_DATA[id];
+            if (!currentRestaurant) {
+                alert('商家不存在');
+                goBack();
+                return;
+            }
+
+            renderRestaurant();
+        }
+
+        function renderRestaurant() {
+            const r = currentRestaurant;
+
+            document.getElementById('restaurantImage').textContent = r.image;
+            document.getElementById('restaurantName').textContent = r.name;
+            document.getElementById('restaurantRating').textContent = r.rating;
+            document.getElementById('restaurantSales').textContent = r.sales > 999 ? '1000+' : r.sales;
+            document.getElementById('restaurantDistance').textContent = r.distance;
+            document.getElementById('minPrice').textContent = `¥${r.minPrice}`;
+            document.getElementById('deliveryFee').textContent = `¥${r.deliveryFee}`;
+            document.getElementById('deliveryTime').textContent = r.deliveryTime;
+
+            // 渲染分类
+            const sidebar = document.getElementById('sidebar');
+            sidebar.innerHTML = r.categories.map((cat, i) => `
+                <div class="sidebar-item ${i === 0 ? 'active' : ''}" onclick="scrollToCategory(${i})">${cat.name}</div>
+            `).join('');
+
+            // 渲染菜品
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = r.categories.map((cat, i) => `
+                <div class="dish-category" id="category-${i}">
+                    <div class="dish-category-title">${cat.name}</div>
+                    ${cat.dishes.map(dish => {
+                        const count = cart.items.find(item => item.id === dish.id)?.count || 0;
+                        return `
+                            <div class="dish-item">
+                                <div class="dish-img">🍽️</div>
+                                <div class="dish-info">
+                                    <div class="dish-name">${dish.name}</div>
+                                    <div class="dish-desc">${dish.desc}</div>
+                                    <div class="dish-meta">月售${dish.sales}</div>
+                                    <div class="dish-footer">
+                                        <div class="dish-price">${dish.price}</div>
+                                        <div class="dish-controls">
+                                            ${count > 0 ? `<button class="dish-btn dish-btn-minus" onclick="removeDish(${dish.id}); renderRestaurant();">−</button>` : ''}
+                                            <span class="dish-count ${count > 0 ? 'show' : ''}" id="count-${dish.id}">${count}</span>
+                                            <button class="dish-btn dish-btn-plus" onclick="showDishModal(${dish.id})">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `).join('');
+
+            updateCartBar();
+        }
+
+        function scrollToCategory(index) {
+            const category = document.getElementById(`category-${index}`);
+            if (category) {
+                category.scrollIntoView({ behavior: 'smooth' });
+            }
+            document.querySelectorAll('.sidebar-item').forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+        }
+
+        function showDishModal(dishId) {
+            let dish = null;
+            for (const cat of currentRestaurant.categories) {
+                const found = cat.dishes.find(d => d.id === dishId);
+                if (found) {
+                    dish = found;
+                    break;
+                }
+            }
+
+            if (!dish) return;
+
+            const modal = document.getElementById('modal');
+            modal.innerHTML = `
+                <div class="modal-header">
+                    <div class="modal-title">${dish.name}</div>
+                    <button class="modal-close-btn" onclick="closeModal()">×</button>
+                </div>
+                <div class="modal-content">
+                    <div class="spec-group">
+                        <div class="spec-title">份量</div>
+                        <div class="spec-options">
+                            <div class="spec-option selected" onclick="selectSpec(this)">默认</div>
+                        </div>
+                    </div>
+                    <div class="spec-group">
+                        <div class="spec-title">温度</div>
+                        <div class="spec-options">
+                            <div class="spec-option selected" onclick="selectSpec(this)">常温</div>
+                            <div class="spec-option" onclick="selectSpec(this)">冰</div>
+                            <div class="spec-option" onclick="selectSpec(this)">加冰</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="price-display">
+                        <div class="price-label">¥${dish.originalPrice}</div>
+                        <div class="price-value">${dish.price}</div>
+                    </div>
+                    <button class="add-cart-btn" onclick="addToCart(${dishId})">加入购物车</button>
+                </div>
+            `;
+
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function selectSpec(el) {
+            el.parentElement.querySelectorAll('.spec-option').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function addToCart(dishId) {
+            let dish = null;
+            for (const cat of currentRestaurant.categories) {
+                const found = cat.dishes.find(d => d.id === dishId);
+                if (found) {
+                    dish = found;
+                    break;
+                }
+            }
+
+            if (!dish) return;
+
+            const item = cart.items.find(i => i.id === dishId);
+            if (item) {
+                item.count += 1;
+            } else {
+                cart.items.push({
+                    id: dishId,
+                    name: dish.name,
+                    price: dish.price,
+                    count: 1
+                });
+            }
+
+            // 保存到 localStorage
+            const cartData = {
+                items: cart.items,
+                restaurant: {
+                    id: currentRestaurant.id,
+                    name: currentRestaurant.name
+                }
+            };
+            localStorage.setItem('cart', JSON.stringify(cartData));
+
+            closeModal();
+            updateCartDisplay();
+        }
+
+        function removeDish(dishId) {
+            const item = cart.items.find(i => i.id === dishId);
+            if (item && item.count > 0) {
+                item.count -= 1;
+                if (item.count === 0) {
+                    cart.items = cart.items.filter(i => i.id !== dishId);
+                }
+            }
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            renderRestaurant();
+        }
+
+        function updateCartBar() {
+            const totalCount = cart.items.reduce((sum, item) => sum + item.count, 0);
+            const totalPrice = cart.items.reduce((sum, item) => sum + item.price * item.count, 0);
+            const cartBar = document.getElementById('cartBar');
+
+            if (totalCount === 0) {
+                cartBar.style.display = 'none';
+            } else {
+                cartBar.style.display = 'flex';
+                document.getElementById('cartBadge').textContent = totalCount;
+                document.getElementById('cartTotal').textContent = (totalPrice + currentRestaurant.deliveryFee).toFixed(2);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        function showCart() {
+            alert('购物车详情页开发中');
+        }
+
+        function goToCheckout() {
+            if (cart.items.length === 0) {
+                alert('购物车为空');
+                return;
+            }
+            // 保存购物车数据
+            const cartData = {
+                items: cart.items,
+                restaurant: {
+                    id: currentRestaurant.id,
+                    name: currentRestaurant.name
+                }
+            };
+            localStorage.setItem('cart', JSON.stringify(cartData));
+            window.location.href = 'cart.html';
+        }
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模拟外卖点餐 - HTML Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+        }
+
+        /* ========== Header ========== */
+        .header {
+            background: #FFC300;
+            padding: 20px 20px 20px;
+            color: #333;
+        }
+
+        .location {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .location-icon {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+
+        .location-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .search-bar {
+            background: #fff;
+            border-radius: 25px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .search-icon {
+            font-size: 16px;
+            margin-right: 8px;
+            color: #999;
+        }
+
+        .search-text {
+            color: #999;
+        }
+
+        /* ========== Category Section ========== */
+        .category-section {
+            display: flex;
+            flex-wrap: wrap;
+            background: #fff;
+            padding: 15px;
+            gap: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .category-item {
+            flex: 0 0 calc(20% - 8px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 0;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .category-icon {
+            font-size: 32px;
+            margin-bottom: 6px;
+        }
+
+        .category-name {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .category-item.active .category-name {
+            color: #FFC300;
+            font-weight: 600;
+        }
+
+        /* ========== Sort Bar ========== */
+        .sort-bar {
+            display: flex;
+            background: #fff;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            overflow-x: auto;
+            gap: 20px;
+        }
+
+        .sort-item {
+            font-size: 13px;
+            color: #666;
+            white-space: nowrap;
+            cursor: pointer;
+            padding: 6px 0;
+        }
+
+        .sort-item.active {
+            color: #333;
+            font-weight: 700;
+            border-bottom: 2px solid #FFC300;
+        }
+
+        /* ========== Restaurant List ========== */
+        .restaurant-list {
+            padding: 12px;
+        }
+
+        .restaurant-card {
+            display: flex;
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s;
+        }
+
+        .restaurant-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .restaurant-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 8px;
+            margin-right: 16px;
+            background: #FFC300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            flex-shrink: 0;
+        }
+
+        .restaurant-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .restaurant-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .restaurant-meta {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            gap: 12px;
+        }
+
+        .rating {
+            color: #ff4b00;
+            font-weight: 600;
+        }
+
+        .restaurant-price {
+            display: flex;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+            gap: 12px;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag {
+            font-size: 11px;
+            color: #999;
+            border: 1px solid #e0e0e0;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .activity-tag {
+            font-size: 11px;
+            color: #ff4b00;
+            border: 1px solid #ffd1c7;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        /* ========== Page Control ========== */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* ========== Restaurant Detail ========== */
+        .restaurant-header {
+            background: #FFC300;
+            padding: 16px;
+            color: #333;
+        }
+
+        .header-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .header-notice {
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+
+        .main {
+            display: flex;
+            height: calc(100vh - 300px);
+            background: #fff;
+        }
+
+        .category-sidebar {
+            width: 120px;
+            background: #f8f8f8;
+            overflow-y: auto;
+            border-right: 1px solid #f0f0f0;
+        }
+
+        .sidebar-item {
+            padding: 20px 12px;
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .sidebar-item.active {
+            background: #fff;
+            color: #333;
+            font-weight: 600;
+            border-left-color: #FFC300;
+        }
+
+        .dish-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .dish-group {
+            margin-bottom: 24px;
+        }
+
+        .group-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .dish-item {
+            display: flex;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .dish-img {
+            width: 100px;
+            height: 100px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .dish-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dish-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .dish-tag {
+            display: inline-block;
+            font-size: 11px;
+            color: #fff;
+            background: #ff4b00;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 6px;
+        }
+
+        .dish-desc {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .dish-meta {
+            display: flex;
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 8px;
+            gap: 12px;
+        }
+
+        .calories {
+            color: #52c41a;
+        }
+
+        .dish-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            font-size: 18px;
+            color: #ff4b00;
+            font-weight: 700;
+        }
+
+        .price::before {
+            content: '¥';
+            font-size: 14px;
+        }
+
+        .count-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-minus, .btn-plus {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-minus {
+            border: 2px solid #ddd;
+            color: #666;
+        }
+
+        .btn-plus {
+            background: #FFC300;
+            color: #333;
+            border: none;
+        }
+
+        .count {
+            min-width: 30px;
+            text-align: center;
+            font-size: 13px;
+            color: #333;
+        }
+
+        /* ========== Cart Bar ========== */
+        .cart-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: #333;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+            max-width: 480px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .cart-icon {
+            width: 60px;
+            height: 60px;
+            background: #FFC300;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            position: relative;
+            cursor: pointer;
+            margin-top: -15px;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4b00;
+            color: #fff;
+            font-size: 12px;
+            min-width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-info {
+            flex: 1;
+            color: #fff;
+        }
+
+        .cart-total {
+            display: flex;
+            align-items: baseline;
+            font-size: 12px;
+        }
+
+        .cart-total .price {
+            color: #fff;
+            font-size: 22px;
+        }
+
+        .cart-total .price::before {
+            content: '¥';
+            font-size: 14px;
+        }
+
+        .cart-fee {
+            font-size: 11px;
+            color: #ccc;
+            margin-left: 6px;
+        }
+
+        .cart-calories {
+            font-size: 12px;
+            color: #52c41a;
+            margin-top: 2px;
+        }
+
+        .cart-submit {
+            background: #FFC300;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 0 24px;
+            height: 48px;
+            border-radius: 24px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cart-submit:hover {
+            background: #ffb700;
+        }
+
+        .cart-submit.disabled {
+            background: #666;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* ========== Success Page ========== */
+        .success-card {
+            background: #fff;
+            margin: 20px;
+            padding: 40px 20px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+
+        .success-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .success-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .savings-card {
+            background: linear-gradient(135deg, #FFC300 0%, #ffdb4d 100%);
+            margin: 20px;
+            padding: 32px 20px;
+            border-radius: 16px;
+            color: #333;
+        }
+
+        .savings-title {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .savings-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .savings-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .savings-value {
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .savings-value.money {
+            color: #ff4b00;
+        }
+
+        .savings-value.calories {
+            color: #52c41a;
+        }
+
+        .savings-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .savings-divider {
+            width: 1px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .savings-tips {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .btn-group {
+            margin: 20px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            background: #FFC300;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: #ffb700;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            background: #fff;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 25px;
+            border: 2px solid #ddd;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            border-color: #999;
+        }
+
+        /* ========== Tab Bar ========== */
+        .tab-bar {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-top: 1px solid #f0f0f0;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .tab-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .tab-item.active {
+            color: #FFC300;
+        }
+
+        .tab-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state button {
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ========== 首页 ========== -->
+        <div id="indexPage" class="page active">
+            <!-- Header -->
+            <div class="header">
+                <div class="location">
+                    <span class="location-icon">📍</span>
+                    <span class="location-text">公司 · 上海市浦东新区陆家嘴环路1000号</span>
+                </div>
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <span class="search-text">搜索商家、菜品</span>
+                </div>
+            </div>
+
+            <!-- 分类 -->
+            <div class="category-section" id="categorySection"></div>
+
+            <!-- 排序 -->
+            <div class="sort-bar" id="sortBar"></div>
+
+            <!-- 商家列表 -->
+            <div class="restaurant-list" id="restaurantList"></div>
+        </div>
+
+        <!-- ========== 商家详情页 ========== -->
+        <div id="restaurantPage" class="page">
+            <div class="restaurant-header" id="restaurantHeader"></div>
+            <div class="main">
+                <div class="category-sidebar" id="categorySidebar"></div>
+                <div class="dish-list" id="dishList"></div>
+            </div>
+            <div class="cart-bar" id="cartBar" style="display: none;"></div>
+        </div>
+
+        <!-- ========== 成功页 ========== -->
+        <div id="successPage" class="page">
+            <div class="success-card">
+                <div class="success-icon">✅</div>
+                <div class="success-title">虚拟下单成功！</div>
+                <div class="success-subtitle">本次未产生真实消费，您已成功「管住嘴、守住钱」</div>
+            </div>
+
+            <div class="savings-card">
+                <div class="savings-title">本次虚拟节约</div>
+                <div class="savings-row">
+                    <div class="savings-item">
+                        <div class="savings-value money" id="savedMoney">¥0</div>
+                        <div class="savings-label">节约金额</div>
+                    </div>
+                    <div class="savings-divider"></div>
+                    <div class="savings-item">
+                        <div class="savings-value calories" id="savedCalories">0</div>
+                        <div class="savings-label">节约卡路里（千卡）</div>
+                    </div>
+                </div>
+                <div class="savings-tips" id="savingsTips"></div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-primary" onclick="goToIndex()">再逛逛</button>
+                <button class="btn-secondary" onclick="alert('订单页功能开发中')">查看订单</button>
+            </div>
+        </div>
+
+        <!-- Tab Bar -->
+        <div class="tab-bar" id="tabBar"></div>
+    </div>
+
+    <script>
+        // ===== 数据 =====
+        const CATEGORIES = [
+            { id: 'all', name: '全部', icon: '🍱' },
+            { id: 'fastfood', name: '快餐便当', icon: '🍔' },
+            { id: 'rice', name: '米粉面馆', icon: '🍜' },
+            { id: 'dessert', name: '甜点饮品', icon: '🧋' },
+            { id: 'fruit', name: '水果生鲜', icon: '🍉' },
+            { id: 'snack', name: '小吃零食', icon: '🍢' },
+            { id: 'healthy', name: '轻食减脂', icon: '🥗' }
+        ];
+
+        const SORT_OPTIONS = [
+            { id: 'default', name: '综合排序' },
+            { id: 'rating', name: '评分最高' },
+            { id: 'sales', name: '销量最高' },
+            { id: 'time', name: '速度最快' },
+            { id: 'price', name: '起送价最低' }
+        ];
+
+        const RESTAURANTS = [
+            {
+                id: 1,
+                name: '麦当劳 McDonald\'s',
+                category: 'fastfood',
+                rating: 4.8,
+                sales: 9999,
+                deliveryTime: 30,
+                deliveryFee: 5,
+                minPrice: 20,
+                packagingFee: 2,
+                tags: ['准时宝', '发票', '品牌连锁'],
+                image: '🍔',
+                activity: ['满30减5', '新客立减3元'],
+                dishes: [
+                    { id: 101, name: '巨无霸套餐', desc: '巨无霸汉堡 + 中薯条 + 中可乐', price: 35, calories: 850, sales: 1200, tag: '热销' },
+                    { id: 102, name: '麦辣鸡腿堡', desc: '经典麦辣鸡腿堡', price: 18, calories: 480, sales: 2300, tag: '' },
+                    { id: 103, name: '麦乐鸡（5块）', desc: '外酥里嫩', price: 12, calories: 220, sales: 1800, tag: '' },
+                ]
+            },
+            {
+                id: 2,
+                name: '兰州拉面',
+                category: 'rice',
+                rating: 4.5,
+                sales: 3500,
+                deliveryTime: 25,
+                deliveryFee: 2,
+                minPrice: 15,
+                packagingFee: 1,
+                tags: ['准时宝', '老字号'],
+                image: '🍜',
+                activity: ['满20减3'],
+                dishes: [
+                    { id: 201, name: '牛肉拉面', desc: '正宗兰州口味，汤鲜味美', price: 18, calories: 520, sales: 1500, tag: '招牌' },
+                    { id: 202, name: '炒面', desc: '劲道爽口', price: 16, calories: 580, sales: 900, tag: '' },
+                    { id: 203, name: '凉拌黄瓜', desc: '清爽开胃', price: 8, calories: 45, sales: 600, tag: '低脂' },
+                ]
+            },
+            {
+                id: 3,
+                name: '喜茶 HEYTEA',
+                category: 'dessert',
+                rating: 4.7,
+                sales: 5600,
+                deliveryTime: 35,
+                deliveryFee: 4,
+                minPrice: 25,
+                packagingFee: 1,
+                tags: ['品牌连锁', '准时宝'],
+                image: '🧋',
+                activity: ['满40减6'],
+                dishes: [
+                    { id: 301, name: '多肉葡萄', desc: '经典果茶，清新不腻', price: 28, calories: 180, sales: 3200, tag: '招牌' },
+                    { id: 302, name: '烤黑糖波波牛乳', desc: '浓郁牛乳搭配Q弹波波', price: 22, calories: 280, sales: 2100, tag: '' },
+                    { id: 303, name: '纯绿研', desc: '0卡糖可选', price: 15, calories: 50, sales: 1200, tag: '低脂' },
+                ]
+            },
+            {
+                id: 4,
+                name: '沙县小吃',
+                category: 'fastfood',
+                rating: 4.3,
+                sales: 4200,
+                deliveryTime: 20,
+                deliveryFee: 0,
+                minPrice: 10,
+                packagingFee: 1,
+                tags: ['免配送费', '经济实惠'],
+                image: '🍱',
+                activity: ['满15减2'],
+                dishes: [
+                    { id: 401, name: '鸡腿饭', desc: '卤香鸡腿 + 时蔬 + 米饭', price: 16, calories: 650, sales: 1800, tag: '热销' },
+                    { id: 402, name: '蒸饺（10个）', desc: '皮薄馅大', price: 10, calories: 320, sales: 2200, tag: '' },
+                ]
+            }
+        ];
+
+        // ===== 状态 =====
+        let state = {
+            activeCategory: 'all',
+            activeSort: 'default',
+            allRestaurants: RESTAURANTS,
+            restaurants: RESTAURANTS,
+            currentRestaurant: null,
+            cart: {
+                restaurantId: null,
+                items: [] // { dishId, name, price, calories, count }
+            }
+        };
+
+        // ===== 初始化 =====
+        function init() {
+            renderIndex();
+            renderTabBar();
+        }
+
+        // ===== 首页 =====
+        function renderIndex() {
+            // 分类
+            const categorySection = document.getElementById('categorySection');
+            categorySection.innerHTML = CATEGORIES.map(cat => `
+                <div class="category-item ${state.activeCategory === cat.id ? 'active' : ''}" onclick="filterByCategory('${cat.id}')">
+                    <div class="category-icon">${cat.icon}</div>
+                    <div class="category-name">${cat.name}</div>
+                </div>
+            `).join('');
+
+            // 排序
+            const sortBar = document.getElementById('sortBar');
+            sortBar.innerHTML = SORT_OPTIONS.map(opt => `
+                <div class="sort-item ${state.activeSort === opt.id ? 'active' : ''}" onclick="sortRestaurants('${opt.id}')">
+                    ${opt.name}
+                </div>
+            `).join('');
+
+            // 商家列表
+            const restaurantList = document.getElementById('restaurantList');
+            restaurantList.innerHTML = state.restaurants.map(r => `
+                <div class="restaurant-card" onclick="goToRestaurant(${r.id})">
+                    <div class="restaurant-img">${r.image}</div>
+                    <div class="restaurant-info">
+                        <div class="restaurant-name">${r.name}</div>
+                        <div class="restaurant-meta">
+                            <span class="rating">★ ${r.rating}</span>
+                            <span>月售 ${r.sales}</span>
+                            <span>${r.deliveryTime}分钟</span>
+                        </div>
+                        <div class="restaurant-price">
+                            <span>起送 ¥${r.minPrice}</span>
+                            <span>配送 ¥${r.deliveryFee}</span>
+                        </div>
+                        <div class="tags">
+                            ${r.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                        <div>
+                            ${r.activity.map(act => `<span class="activity-tag">${act}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterByCategory(id) {
+            state.activeCategory = id;
+            state.restaurants = id === 'all'
+                ? state.allRestaurants
+                : state.allRestaurants.filter(r => r.category === id);
+            renderIndex();
+        }
+
+        function sortRestaurants(id) {
+            state.activeSort = id;
+            const list = [...state.restaurants];
+            switch (id) {
+                case 'rating':
+                    list.sort((a, b) => b.rating - a.rating);
+                    break;
+                case 'sales':
+                    list.sort((a, b) => b.sales - a.sales);
+                    break;
+                case 'time':
+                    list.sort((a, b) => a.deliveryTime - b.deliveryTime);
+                    break;
+                case 'price':
+                    list.sort((a, b) => a.minPrice - b.minPrice);
+                    break;
+            }
+            state.restaurants = list;
+            renderIndex();
+        }
+
+        // ===== 商家详情页 =====
+        function goToRestaurant(id) {
+            state.currentRestaurant = RESTAURANTS.find(r => r.id === id);
+            showPage('restaurantPage');
+            renderRestaurant();
+        }
+
+        function renderRestaurant() {
+            const r = state.currentRestaurant;
+
+            // 头部
+            const header = document.getElementById('restaurantHeader');
+            header.innerHTML = `
+                <div class="header-name">${r.name}</div>
+                <div class="header-meta">
+                    <span class="rating">★ ${r.rating}</span>
+                    <span>月售 ${r.sales}</span>
+                    <span>${r.deliveryTime}分钟</span>
+                </div>
+                <div class="header-notice">公告：本店为模拟商家，所有订单为虚拟下单，不产生真实消费。</div>
+            `;
+
+            // 分类侧边栏
+            const categories = [
+                { name: '热销推荐', dishes: r.dishes.filter(d => d.tag === '热销' || d.tag === '招牌') },
+                { name: '主食', dishes: r.dishes.filter(d => d.calories >= 400) },
+                { name: '小食', dishes: r.dishes.filter(d => d.calories > 150 && d.calories < 400) },
+                { name: '饮品', dishes: r.dishes.filter(d => d.calories <= 150) }
+            ].filter(cat => cat.dishes.length > 0);
+
+            const sidebar = document.getElementById('categorySidebar');
+            sidebar.innerHTML = categories.map((cat, i) => `
+                <div class="sidebar-item ${i === 0 ? 'active' : ''}" onclick="scrollToDishGroup(${i})">${cat.name}</div>
+            `).join('');
+
+            // 菜品列表
+            const dishList = document.getElementById('dishList');
+            dishList.innerHTML = categories.map((cat, i) => `
+                <div class="dish-group">
+                    <div class="group-title">${cat.name}</div>
+                    ${cat.dishes.map(dish => {
+                        const count = state.cart.items.find(item => item.dishId === dish.id)?.count || 0;
+                        return `
+                            <div class="dish-item">
+                                <div class="dish-img">${r.image}</div>
+                                <div class="dish-info">
+                                    <div class="dish-name">
+                                        ${dish.name}
+                                        ${dish.tag ? `<span class="dish-tag">${dish.tag}</span>` : ''}
+                                    </div>
+                                    <div class="dish-desc">${dish.desc}</div>
+                                    <div class="dish-meta">
+                                        <span>月售 ${dish.sales}</span>
+                                        <span class="calories">${dish.calories}千卡</span>
+                                    </div>
+                                    <div class="dish-bottom">
+                                        <div class="price">${dish.price}</div>
+                                        <div class="count-control">
+                                            ${count > 0 ? `<div class="btn-minus" onclick="decreaseItem(${dish.id})">-</div>` : ''}
+                                            ${count > 0 ? `<span class="count">${count}</span>` : ''}
+                                            <div class="btn-plus" onclick="addItem(${dish.id}, '${dish.name}', ${dish.price}, ${dish.calories})">+</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `).join('');
+
+            updateCartBar();
+        }
+
+        function addItem(dishId, name, price, calories) {
+            if (state.currentRestaurant.id !== state.cart.restaurantId && state.cart.restaurantId !== null) {
+                if (confirm('购物车已有其他商家商品，是否清空并添加？')) {
+                    state.cart = { restaurantId: state.currentRestaurant.id, items: [] };
+                } else {
+                    return;
+                }
+            }
+
+            state.cart.restaurantId = state.currentRestaurant.id;
+            const item = state.cart.items.find(i => i.dishId === dishId);
+            if (item) {
+                item.count += 1;
+            } else {
+                state.cart.items.push({ dishId, name, price, calories, count: 1 });
+            }
+            renderRestaurant();
+        }
+
+        function decreaseItem(dishId) {
+            const item = state.cart.items.find(i => i.dishId === dishId);
+            if (item) {
+                item.count -= 1;
+                if (item.count <= 0) {
+                    state.cart.items = state.cart.items.filter(i => i.dishId !== dishId);
+                }
+            }
+            if (state.cart.items.length === 0) {
+                state.cart.restaurantId = null;
+            }
+            renderRestaurant();
+        }
+
+        function updateCartBar() {
+            const cartBar = document.getElementById('cartBar');
+            if (state.cart.items.length === 0) {
+                cartBar.style.display = 'none';
+                return;
+            }
+
+            const foodTotal = state.cart.items.reduce((sum, item) => sum + item.price * item.count, 0);
+            const totalCalories = state.cart.items.reduce((sum, item) => sum + item.calories * item.count, 0);
+            const totalCount = state.cart.items.reduce((sum, item) => sum + item.count, 0);
+            const r = state.currentRestaurant;
+            const totalPrice = foodTotal + r.deliveryFee + r.packagingFee;
+            const canOrder = foodTotal >= r.minPrice;
+
+            cartBar.style.display = 'flex';
+            cartBar.innerHTML = `
+                <div class="cart-icon" onclick="goToCart()">
+                    🛒
+                    <div class="cart-badge">${totalCount}</div>
+                </div>
+                <div class="cart-info">
+                    <div class="cart-total">
+                        <div class="price">${totalPrice.toFixed(2)}</div>
+                        <div class="cart-fee">含配送¥${r.deliveryFee} 包装¥${r.packagingFee}</div>
+                    </div>
+                    <div class="cart-calories">${totalCalories}千卡</div>
+                </div>
+                <button class="cart-submit ${canOrder ? '' : 'disabled'}" onclick="goToConfirm()" ${!canOrder ? 'disabled' : ''}>
+                    ${canOrder ? '去结算' : `差¥${(r.minPrice - foodTotal).toFixed(2)}起送`}
+                </button>
+            `;
+        }
+
+        function goToCart() {
+            alert('购物车详情页面开发中');
+        }
+
+        function goToConfirm() {
+            if (state.cart.items.length === 0) return;
+
+            const foodTotal = state.cart.items.reduce((sum, item) => sum + item.price * item.count, 0);
+            const totalCalories = state.cart.items.reduce((sum, item) => sum + item.calories * item.count, 0);
+            const totalCount = state.cart.items.reduce((sum, item) => sum + item.count, 0);
+            const r = state.currentRestaurant;
+            const totalPrice = foodTotal + r.deliveryFee + r.packagingFee;
+
+            // 直接生成订单，跳转到成功页
+            showSuccessPage(totalPrice, totalCalories);
+        }
+
+        // ===== 成功页 =====
+        function showSuccessPage(savedMoney, savedCalories) {
+            document.getElementById('savedMoney').textContent = '¥' + savedMoney.toFixed(2);
+            document.getElementById('savedCalories').textContent = savedCalories;
+
+            const tips = [
+                '省下的这笔钱，足够买一本好书，投资自己。',
+                `这些卡路里，相当于慢跑 ${Math.round(savedCalories / 10)} 分钟，今天运动一下？`,
+                '理性消费 +1，健康习惯 +1，今天也是自律的一天！',
+                '假装点过就是吃过，钱包和身体都感谢你。',
+                '少点一次外卖，多一次自己下厨的机会。'
+            ];
+            const tip = tips[Math.floor(Math.random() * tips.length)];
+            document.getElementById('savingsTips').textContent = tip;
+
+            // 清空购物车
+            state.cart = { restaurantId: null, items: [] };
+
+            showPage('successPage');
+        }
+
+        function goToIndex() {
+            showPage('indexPage');
+        }
+
+        // ===== 页面切换 =====
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // ===== Tab Bar =====
+        function renderTabBar() {
+            const tabBar = document.getElementById('tabBar');
+            tabBar.innerHTML = `
+                <div class="tab-item active" onclick="goToIndex()">
+                    <div class="tab-icon">🏠</div>
+                    <div>首页</div>
+                </div>
+                <div class="tab-item" onclick="alert('订单页面开发中')">
+                    <div class="tab-icon">📋</div>
+                    <div>订单</div>
+                </div>
+                <div class="tab-item" onclick="alert('我的页面开发中')">
+                    <div class="tab-icon">👤</div>
+                    <div>我的</div>
+                </div>
+            `;
+        }
+
+        function scrollToDishGroup(index) {
+            const groups = document.querySelectorAll('.dish-group');
+            if (groups[index]) {
+                groups[index].scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // 初始化
+        init();
+    </script>
+</body>
+</html>

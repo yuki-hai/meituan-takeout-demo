@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购物车结算</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #fff;
+            border-bottom: 1px solid #f0f0f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .header-action {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* ===== Content ===== */
+        .content {
+            padding-bottom: 100px;
+        }
+
+        /* ===== Address Section ===== */
+        .address-section {
+            background: linear-gradient(135deg, #FFF8E6 0%, #FFEAA7 100%);
+            padding: 16px;
+            margin: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .address-info {
+            flex: 1;
+        }
+
+        .address-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .address-detail {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 2px;
+        }
+
+        .address-contact {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .address-arrow {
+            font-size: 20px;
+            color: #999;
+        }
+
+        /* ===== Delivery Type ===== */
+        .delivery-section {
+            background: #fff;
+            margin: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .delivery-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer;
+        }
+
+        .delivery-item:last-child {
+            border-bottom: none;
+        }
+
+        .delivery-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .delivery-icon {
+            font-size: 18px;
+        }
+
+        .delivery-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .radio {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            background: #fff;
+        }
+
+        .radio.checked {
+            border-color: #FFC300;
+            background: #FFC300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .radio.checked::after {
+            content: '✓';
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* ===== Order Items ===== */
+        .order-section {
+            background: #fff;
+            margin: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f5f5f5;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 13px;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            flex: 1;
+            color: #333;
+        }
+
+        .item-count {
+            color: #999;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .item-price {
+            color: #FF4D4F;
+            font-weight: 600;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .item-price::before {
+            content: '¥';
+            font-size: 11px;
+        }
+
+        /* ===== Coupon & Discount ===== */
+        .coupon-section {
+            background: #fff;
+            margin: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .coupon-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .coupon-item:last-child {
+            border-bottom: none;
+        }
+
+        .coupon-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .coupon-value {
+            color: #FF4D4F;
+            font-weight: 600;
+        }
+
+        /* ===== Remark ===== */
+        .remark-section {
+            background: #fff;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 12px 16px;
+        }
+
+        .remark-label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .remark-input {
+            width: 100%;
+            border: 1px solid #f0f0f0;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 13px;
+            outline: none;
+            background: #f9f9f9;
+        }
+
+        .remark-input:focus {
+            border-color: #FFC300;
+            background: #fff;
+        }
+
+        /* ===== Fee Summary ===== */
+        .fee-summary {
+            background: #fff;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 13px;
+        }
+
+        .fee-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .fee-row:last-child {
+            border-bottom: none;
+        }
+
+        .fee-label {
+            color: #666;
+        }
+
+        .fee-value {
+            color: #333;
+        }
+
+        .fee-value.discount {
+            color: #52c41a;
+        }
+
+        .total-row {
+            padding-top: 8px;
+            padding-bottom: 0;
+            margin-top: 8px;
+            border-top: 1px solid #f5f5f5 !important;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .total-price {
+            font-size: 18px;
+            color: #FF4D4F;
+        }
+
+        .total-price::before {
+            content: '¥';
+            font-size: 14px;
+        }
+
+        /* ===== Bottom Bar ===== */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 480px;
+            margin: 0 auto;
+            background: #fff;
+            border-top: 1px solid #f0f0f0;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .total-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .total-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+
+        .total-amount {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FF4D4F;
+        }
+
+        .total-amount::before {
+            content: '¥';
+            font-size: 14px;
+        }
+
+        .submit-btn {
+            background: #FFC300;
+            color: #333;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .submit-btn:active {
+            background: #ffb700;
+        }
+
+        .submit-btn.disabled {
+            background: #ccc;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        /* ===== Notice ===== */
+        .notice {
+            background: #FFF7E6;
+            margin: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <span class="header-title">确认订单</span>
+            <button class="header-action" onclick="goBack()">×</button>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Address -->
+            <div class="address-section" onclick="editAddress()">
+                <div class="address-info">
+                    <div class="address-title">配送地址</div>
+                    <div class="address-detail">上海市浦东新区陆家嘴环路1000号</div>
+                    <div class="address-contact">收货人：张三 13800138000</div>
+                </div>
+                <div class="address-arrow">></div>
+            </div>
+
+            <!-- Delivery Type -->
+            <div class="delivery-section">
+                <div class="delivery-item" onclick="selectDelivery(1)">
+                    <div class="delivery-label">
+                        <span class="delivery-icon">🚴</span>
+                        <span>本单由商家配送</span>
+                    </div>
+                    <div class="delivery-badge">
+                        <span>¥6</span>
+                        <div class="radio checked" id="delivery-1"></div>
+                    </div>
+                </div>
+                <div class="delivery-item" onclick="selectDelivery(2)">
+                    <div class="delivery-label">
+                        <span class="delivery-icon">🏪</span>
+                        <span>到店自取</span>
+                    </div>
+                    <div class="delivery-badge">
+                        <span>免费</span>
+                        <div class="radio" id="delivery-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="order-section">
+                <div class="order-header">
+                    <span id="shopName">瑞幸咖啡</span>
+                    <span>商家自配</span>
+                </div>
+                <div id="orderItems"></div>
+            </div>
+
+            <!-- Coupon -->
+            <div class="coupon-section">
+                <div class="coupon-item" onclick="selectCoupon()">
+                    <div class="coupon-label">
+                        <span>🎫</span>
+                        <span>美团红包</span>
+                    </div>
+                    <div class="coupon-value" id="couponValue">选择优惠</div>
+                </div>
+                <div class="coupon-item" onclick="selectDiscount()">
+                    <div class="coupon-label">
+                        <span>🏷️</span>
+                        <span>商家优惠</span>
+                    </div>
+                    <div id="discountValue">-¥10.1</div>
+                </div>
+            </div>
+
+            <!-- Remark -->
+            <div class="remark-section">
+                <div class="remark-label">订单备注</div>
+                <input type="text" class="remark-input" placeholder="请填写对餐品的备注要求（选填）" id="remark">
+            </div>
+
+            <!-- Fee Summary -->
+            <div class="fee-summary">
+                <div class="fee-row">
+                    <span class="fee-label">商品总价</span>
+                    <span class="fee-value" id="foodTotal">¥26.8</span>
+                </div>
+                <div class="fee-row">
+                    <span class="fee-label">配送费</span>
+                    <span class="fee-value" id="deliveryFeeValue">¥6</span>
+                </div>
+                <div class="fee-row">
+                    <span class="fee-label">商家优惠</span>
+                    <span class="fee-value discount" id="discountFeeValue">-¥10.1</span>
+                </div>
+                <div class="fee-row total-row">
+                    <span>合计</span>
+                    <span class="total-price" id="totalPrice">22.7</span>
+                </div>
+            </div>
+
+            <!-- Notice -->
+            <div class="notice">
+                ⚠️ 本订单为模拟下单，不会扣款，不会真实配送。下单后系统将展示您本次虚拟节约的金额和卡路里。
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="bottom-bar">
+            <div class="total-info">
+                <div class="total-label">合计</div>
+                <div class="total-amount" id="bottomTotal">22.7</div>
+            </div>
+            <button class="submit-btn" onclick="placeOrder()">虚拟下单</button>
+        </div>
+    </div>
+
+    <script>
+        // 从 localStorage 获取购物车数据
+        const cart = JSON.parse(localStorage.getItem('cart') || '{"items":[],"restaurant":{}}');
+        let selectedDelivery = 1;
+        let selectedCoupon = 0;
+
+        function init() {
+            renderOrderItems();
+            updateTotal();
+        }
+
+        function renderOrderItems() {
+            const container = document.getElementById('orderItems');
+            const items = cart.items || [];
+
+            if (items.length === 0) {
+                container.innerHTML = '<div style="padding: 12px 16px; color: #999;">购物车为空</div>';
+                return;
+            }
+
+            container.innerHTML = items.map(item => `
+                <div class="order-item">
+                    <span class="item-name">${item.name}</span>
+                    <span class="item-count">×${item.count}</span>
+                    <span class="item-price">${(item.price * item.count).toFixed(2)}</span>
+                </div>
+            `).join('');
+
+            const shopName = cart.restaurant?.name || '瑞幸咖啡';
+            document.getElementById('shopName').textContent = shopName;
+        }
+
+        function selectDelivery(type) {
+            selectedDelivery = type;
+            document.getElementById('delivery-1').classList.toggle('checked', type === 1);
+            document.getElementById('delivery-2').classList.toggle('checked', type === 2);
+            updateTotal();
+        }
+
+        function selectCoupon() {
+            alert('选择优惠券功能开发中');
+        }
+
+        function selectDiscount() {
+            alert('商家优惠详情开发中');
+        }
+
+        function updateTotal() {
+            const items = cart.items || [];
+            const foodTotal = items.reduce((sum, item) => sum + item.price * item.count, 0);
+            const deliveryFee = selectedDelivery === 1 ? 6 : 0;
+            const discount = 10.1;
+            const total = foodTotal + deliveryFee - discount;
+
+            document.getElementById('foodTotal').textContent = `¥${foodTotal.toFixed(2)}`;
+            document.getElementById('deliveryFeeValue').textContent = `¥${deliveryFee}`;
+            document.getElementById('discountFeeValue').textContent = `-¥${discount}`;
+            document.getElementById('totalPrice').textContent = total.toFixed(2);
+            document.getElementById('bottomTotal').textContent = total.toFixed(2);
+        }
+
+        function editAddress() {
+            alert('修改地址功能开发中');
+        }
+
+        function placeOrder() {
+            const items = cart.items || [];
+            const foodTotal = items.reduce((sum, item) => sum + item.price * item.count, 0);
+            const deliveryFee = selectedDelivery === 1 ? 6 : 0;
+            const discount = 10.1;
+            const totalPrice = foodTotal + deliveryFee - discount;
+
+            // 模拟计算卡路里（每个菜品平均200卡）
+            const totalCalories = items.reduce((sum, item) => sum + (200 * item.count), 0);
+
+            // 保存订单信息，跳转到成功页
+            const orderData = {
+                savedMoney: totalPrice,
+                savedCalories: totalCalories,
+                items: items,
+                restaurant: cart.restaurant
+            };
+
+            localStorage.setItem('lastOrder', JSON.stringify(orderData));
+            window.location.href = 'success.html';
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        init();
+    </script>
+</body>
+</html>

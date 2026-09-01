@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下单成功</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+            padding-top: 20px;
+        }
+
+        /* ===== Success Card ===== */
+        .success-card {
+            background: #fff;
+            margin: 0 16px 20px;
+            padding: 40px 20px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .success-subtitle {
+            font-size: 13px;
+            color: #999;
+            line-height: 1.5;
+        }
+
+        /* ===== Savings Card ===== */
+        .savings-card {
+            background: linear-gradient(135deg, #FFC300 0%, #FFDB7A 100%);
+            margin: 0 16px 20px;
+            padding: 32px 20px;
+            border-radius: 16px;
+            color: #333;
+            box-shadow: 0 4px 12px rgba(255, 195, 0, 0.15);
+        }
+
+        .savings-title {
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .savings-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .savings-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .savings-value {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .savings-value.money {
+            color: #FF4D4F;
+        }
+
+        .savings-value.calories {
+            color: #52c41a;
+        }
+
+        .savings-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .savings-divider {
+            width: 1px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .savings-tips {
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 13px;
+            color: #555;
+            text-align: center;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        /* ===== Order Info Card ===== */
+        .order-info-card {
+            background: #fff;
+            margin: 0 16px 20px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            padding: 16px;
+            border-bottom: 1px solid #f5f5f5;
+            background: #f9f9f9;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 13px;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .price-value {
+            color: #FF4D4F;
+        }
+
+        /* ===== Order Items ===== */
+        .order-items {
+            padding: 12px 16px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* ===== Buttons ===== */
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin: 0 16px 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: #FFC300;
+            color: #333;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        /* ===== Empty State ===== */
+        .empty-items {
+            padding: 12px 16px;
+            color: #999;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        /* ===== Share Card ===== */
+        .share-card {
+            background: #fff;
+            margin: 0 16px 20px;
+            padding: 16px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .share-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .share-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: #f5f5f5;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-btn:active {
+            background: #eee;
+        }
+
+        /* ===== Loading ===== */
+        .loading {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Success Card -->
+        <div class="success-card">
+            <div class="success-icon">✅</div>
+            <div class="success-title">虚拟下单成功！</div>
+            <div class="success-subtitle">本次未产生真实消费<br>您已成功「管住嘴、守住钱」</div>
+        </div>
+
+        <!-- Savings Card -->
+        <div class="savings-card">
+            <div class="savings-title">本次虚拟节约</div>
+            <div class="savings-row">
+                <div class="savings-item">
+                    <div class="savings-value money" id="savedMoney">¥0</div>
+                    <div class="savings-label">节约金额</div>
+                </div>
+                <div class="savings-divider"></div>
+                <div class="savings-item">
+                    <div class="savings-value calories" id="savedCalories">0</div>
+                    <div class="savings-label">节约卡路里（千卡）</div>
+                </div>
+            </div>
+            <div class="savings-tips" id="savingsTips"></div>
+        </div>
+
+        <!-- Order Info -->
+        <div class="order-info-card">
+            <div class="card-title">订单信息</div>
+            <div class="info-item">
+                <span class="info-label">商家</span>
+                <span class="info-value" id="shopName">瑞幸咖啡</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">下单时间</span>
+                <span class="info-value" id="orderTime"></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">配送方式</span>
+                <span class="info-value">商家配送</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">商品总价</span>
+                <span class="info-value price-value" id="foodTotal">¥0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">配送费</span>
+                <span class="info-value">¥6</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">商家优惠</span>
+                <span class="info-value" style="color: #52c41a;">-¥10.1</span>
+            </div>
+            <div class="info-item" style="font-weight: 700; font-size: 14px; border-top: 1px solid #f5f5f5; padding-top: 12px; margin-top: 8px;">
+                <span>合计</span>
+                <span class="price-value" id="totalPrice">¥0</span>
+            </div>
+
+            <!-- Order Items -->
+            <div class="order-items" id="orderItems"></div>
+        </div>
+
+        <!-- Share Card -->
+        <div class="share-card">
+            <div class="share-title">分享给好友</div>
+            <div class="share-buttons">
+                <button class="share-btn" onclick="shareWeChat()">💬</button>
+                <button class="share-btn" onclick="shareQQ()">🎈</button>
+                <button class="share-btn" onclick="shareFriends()">👥</button>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="goHome()">再逛逛</button>
+            <button class="btn btn-secondary" onclick="goOrders()">查看订单</button>
+        </div>
+    </div>
+
+    <script>
+        function init() {
+            const orderData = JSON.parse(localStorage.getItem('lastOrder') || '{}');
+
+            if (!orderData.savedMoney) {
+                alert('订单数据丢失');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 设置保存的金额和卡路里
+            document.getElementById('savedMoney').textContent = `¥${orderData.savedMoney.toFixed(2)}`;
+            document.getElementById('savedCalories').textContent = orderData.savedCalories;
+
+            // 生成激励文案
+            const tips = [
+                '省下的这笔钱，足够买一本好书，投资自己。',
+                `这些卡路里，相当于慢跑 ${Math.round(orderData.savedCalories / 10)} 分钟，今天运动一下？`,
+                '理性消费 +1，健康习惯 +1，今天也是自律的一天！',
+                '假装点过就是吃过，钱包和身体都感谢你。',
+                '少点一次外卖，多一次自己下厨的机会。'
+            ];
+            const tip = tips[Math.floor(Math.random() * tips.length)];
+            document.getElementById('savingsTips').textContent = tip;
+
+            // 设置订单信息
+            document.getElementById('shopName').textContent = orderData.restaurant?.name || '瑞幸咖啡';
+            document.getElementById('orderTime').textContent = new Date().toLocaleString('zh-CN');
+
+            // 计算价格
+            const foodTotal = orderData.items.reduce((sum, item) => sum + item.price * item.count, 0);
+            const totalPrice = orderData.savedMoney;
+
+            document.getElementById('foodTotal').textContent = `¥${foodTotal.toFixed(2)}`;
+            document.getElementById('totalPrice').textContent = `¥${totalPrice.toFixed(2)}`;
+
+            // 渲染订单项目
+            const itemsContainer = document.getElementById('orderItems');
+            if (orderData.items && orderData.items.length > 0) {
+                itemsContainer.innerHTML = `
+                    <div style="border-top: 1px solid #f5f5f5; padding-top: 12px; margin-top: 12px;">
+                        ${orderData.items.map(item => `
+                            <div class="order-item">
+                                <span>${item.name} × ${item.count}</span>
+                                <span class="price-value">¥${(item.price * item.count).toFixed(2)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // 清空 localStorage
+            localStorage.removeItem('lastOrder');
+            localStorage.removeItem('cart');
+        }
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        function goOrders() {
+            alert('订单历史页面开发中');
+        }
+
+        function shareWeChat() {
+            alert('分享到微信功能开发中');
+        }
+
+        function shareQQ() {
+            alert('分享到 QQ 功能开发中');
+        }
+
+        function shareFriends() {
+            alert('分享给朋友功能开发中');
+        }
+
+        init();
+    </script>
+</body>
+</html>
