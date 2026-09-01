@@ -888,6 +888,9 @@
             }
 
             const modal = document.getElementById('modal');
+            modal.dataset.basePrice = dish.price;
+            modal.dataset.originalPrice = dish.originalPrice;
+
             modal.innerHTML = `
                 <div class="modal-header">
                     <div class="modal-title">${dish.name}</div>
@@ -911,6 +914,34 @@
         function selectSpec(el) {
             el.parentElement.querySelectorAll('.spec-option').forEach(opt => opt.classList.remove('selected'));
             el.classList.add('selected');
+            updateModalPrice();
+        }
+
+        function updateModalPrice() {
+            // 获取 modal 上保存的原始价格和菜品信息
+            const modal = document.getElementById('modal');
+            const originalPrice = parseFloat(modal.dataset.originalPrice);
+            const basePrice = parseFloat(modal.dataset.basePrice);
+
+            // 获取当前选中的规格
+            const allSpecOptions = document.querySelectorAll('.spec-option.selected');
+            let priceAdjustment = 0;
+
+            // 根据规格调整价格
+            allSpecOptions.forEach(option => {
+                const text = option.textContent;
+                if (text.includes('加量') || text.includes('大杯')) {
+                    priceAdjustment += 5; // 加量或大杯加5块钱
+                } else if (text.includes('加冰')) {
+                    priceAdjustment += 1; // 加冰加1块钱
+                }
+            });
+
+            const newPrice = basePrice + priceAdjustment;
+            const priceDisplay = document.querySelector('.price-value');
+            if (priceDisplay) {
+                priceDisplay.textContent = newPrice.toFixed(1);
+            }
         }
 
         function addToCart(dishId) {
