@@ -579,8 +579,8 @@
             const discount = 10.1;
             const totalPrice = foodTotal + deliveryFee - discount;
 
-            // 模拟计算卡路里（每个菜品平均200卡）
-            const totalCalories = items.reduce((sum, item) => sum + (200 * item.count), 0);
+            // 计算总卡路里（使用实际菜品卡路里数据）
+            const totalCalories = items.reduce((sum, item) => sum + (item.calories * item.count), 0);
 
             // 保存订单信息，跳转到成功页
             const orderData = {
