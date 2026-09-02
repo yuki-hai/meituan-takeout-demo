@@ -11,12 +11,20 @@ const pages = [
     'history.html'
 ];
 const foodAssets = [
-    'assets/food/coffee-shop.webp',
-    'assets/food/iced-americano.webp',
-    'assets/food/butter-croissant.webp',
-    'assets/food/pork-trotter-rice.webp',
-    'assets/food/chicken-rice.webp',
-    'assets/food/spicy-hotpot.webp'
+    'assets/food/real/lamb-skewers.webp',
+    'assets/food/real/chicken-wings.webp',
+    'assets/food/real/fish-tofu-skewers.webp',
+    'assets/food/real/grilled-eggplant.webp',
+    'assets/food/real/beef-noodles.webp',
+    'assets/food/real/lamb-noodles.webp',
+    'assets/food/real/egg-radish.webp',
+    'assets/food/real/spicy-fish.webp',
+    'assets/food/real/mao-xue-wang.webp',
+    'assets/food/real/meat-platter.webp',
+    'assets/food/real/seafood-platter.webp',
+    'assets/food/real/roast-duck-rice.webp',
+    'assets/food/real/curry-brisket-rice.webp',
+    'assets/food/real/milk-tea.webp'
 ];
 
 foodAssets.forEach(asset => assert.ok(fs.existsSync(asset), `missing food photo: ${asset}`));

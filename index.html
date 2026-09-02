@@ -277,6 +277,16 @@
             cursor: pointer;
         }
 
+        .photo-credit {
+            padding: 4px 16px 84px;
+            color: #aaa;
+            background: #fff;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .photo-credit a { color: #8b8179; }
+
         .restaurant-card {
             background: #fff;
             margin: 0 12px 12px;
@@ -508,6 +518,7 @@
 
             <!-- Restaurant Section -->
             <div class="restaurant-section" id="restaurantSection"></div>
+            <div class="photo-credit">菜品图片为相似实拍示意 · <a href="assets/food/real/SOURCES.md" target="_blank" rel="noopener">来源与许可</a></div>
         </div>
 
         <!-- Tab Bar -->
@@ -549,8 +560,8 @@
         ];
 
         const PROMOTIONS = [
-            { id: 1, title: '双杯咖啡组合', price: '¥22.1', desc: '免配送费', image: 'assets/food/coffee-shop.webp' },
-            { id: 2, title: '招牌猪脚饭套餐', price: '¥23.9', desc: '低至3.4折', image: 'assets/food/pork-trotter-rice.webp' }
+            { id: 1, title: '炭烤双人组合', price: '¥22.1', desc: '限时免配送费', image: 'assets/food/real/lamb-skewers.webp' },
+            { id: 2, title: '招牌牛肉面套餐', price: '¥23.9', desc: '午餐人气款', image: 'assets/food/real/beef-noodles.webp' }
         ];
 
         const RESTAURANTS = [
@@ -562,7 +573,7 @@
                 deliveryTime: 25,
                 deliveryFee: 6,
                 minPrice: 28,
-                image: 'assets/food/spicy-hotpot.webp',
+                image: 'assets/food/real/lamb-skewers.webp',
                 tags: ['夜宵热点', '自助烧烤'],
                 activities: ['满58减12']
             },
@@ -574,7 +585,7 @@
                 deliveryTime: 20,
                 deliveryFee: 3,
                 minPrice: 15,
-                image: 'assets/food/pork-trotter-rice.webp',
+                image: 'assets/food/real/beef-noodles.webp',
                 tags: ['人气面馆', '快手夜宵'],
                 activities: ['满25减3']
             },
@@ -586,7 +597,7 @@
                 deliveryTime: 30,
                 deliveryFee: 5,
                 minPrice: 30,
-                image: 'assets/food/spicy-hotpot.webp',
+                image: 'assets/food/real/spicy-fish.webp',
                 tags: ['川菜美食', '麻辣爽口'],
                 activities: ['满50减8']
             },
@@ -598,7 +609,7 @@
                 deliveryTime: 28,
                 deliveryFee: 7,
                 minPrice: 35,
-                image: 'assets/food/spicy-hotpot.webp',
+                image: 'assets/food/real/meat-platter.webp',
                 tags: ['日式火锅', '放题聚餐'],
                 activities: ['满60减10']
             },
@@ -610,7 +621,7 @@
                 deliveryTime: 22,
                 deliveryFee: 4,
                 minPrice: 20,
-                image: 'assets/food/coffee-shop.webp',
+                image: 'assets/food/real/roast-duck-rice.webp',
                 tags: ['港式烧味', '经典港茶'],
                 activities: ['满40减6']
             }

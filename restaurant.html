@@ -644,14 +644,22 @@
 
     <script src="app-state.js"></script>
     <script>
-        // 项目内置的写实食物图，避免外链失效。
+        // 项目内置的真实摄影素材，来源与许可记录见 assets/food/real/SOURCES.md。
         const FOOD_IMAGES = {
-            coffee: 'assets/food/coffee-shop.webp',
-            americano: 'assets/food/iced-americano.webp',
-            croissant: 'assets/food/butter-croissant.webp',
-            porkRice: 'assets/food/pork-trotter-rice.webp',
-            chickenRice: 'assets/food/chicken-rice.webp',
-            hotpot: 'assets/food/spicy-hotpot.webp'
+            lambSkewers: 'assets/food/real/lamb-skewers.webp',
+            chickenWings: 'assets/food/real/chicken-wings.webp',
+            fishTofuSkewers: 'assets/food/real/fish-tofu-skewers.webp',
+            grilledEggplant: 'assets/food/real/grilled-eggplant.webp',
+            beefNoodles: 'assets/food/real/beef-noodles.webp',
+            lambNoodles: 'assets/food/real/lamb-noodles.webp',
+            eggRadish: 'assets/food/real/egg-radish.webp',
+            spicyFish: 'assets/food/real/spicy-fish.webp',
+            maoXueWang: 'assets/food/real/mao-xue-wang.webp',
+            meatPlatter: 'assets/food/real/meat-platter.webp',
+            seafoodPlatter: 'assets/food/real/seafood-platter.webp',
+            roastDuckRice: 'assets/food/real/roast-duck-rice.webp',
+            curryBrisketRice: 'assets/food/real/curry-brisket-rice.webp',
+            milkTea: 'assets/food/real/milk-tea.webp'
         };
 
         const RESTAURANTS_DATA = {
@@ -666,21 +674,21 @@
                 packagingFee: 0,
                 discountRules: [{ threshold: 58, amount: 12 }],
                 distance: 0.3,
-                image: FOOD_IMAGES.hotpot,
+                image: FOOD_IMAGES.lambSkewers,
                 imageType: 'img',
                 categories: [
                     {
                         name: '夜宵必点',
                         dishes: [
-                            { id: 101, name: '羊肉串(5串)', desc: '新疆羊肉，鲜嫩多汁', price: 18, originalPrice: 28, sales: 200, calories: 320, image: FOOD_IMAGES.hotpot },
-                            { id: 102, name: '秘制鸡翅(4只)', desc: '独家腌料，烤得焦香', price: 16, originalPrice: 26, sales: 180, calories: 280, image: FOOD_IMAGES.hotpot }
+                            { id: 101, name: '羊肉串(5串)', desc: '新疆羊肉，鲜嫩多汁', price: 18, originalPrice: 28, sales: 200, calories: 320, image: FOOD_IMAGES.lambSkewers },
+                            { id: 102, name: '秘制鸡翅(4只)', desc: '独家腌料，烤得焦香', price: 16, originalPrice: 26, sales: 180, calories: 280, image: FOOD_IMAGES.chickenWings }
                         ]
                     },
                     {
                         name: '烤串类',
                         dishes: [
-                            { id: 103, name: '鱼豆腐(5串)', desc: '软嫩入味', price: 12, originalPrice: 20, sales: 90, calories: 180, image: FOOD_IMAGES.hotpot },
-                            { id: 104, name: '烤茄子(3串)', desc: '配秘制酱料', price: 8, originalPrice: 15, sales: 75, calories: 120, image: FOOD_IMAGES.hotpot }
+                            { id: 103, name: '鱼豆腐(5串)', desc: '软嫩入味', price: 12, originalPrice: 20, sales: 90, calories: 180, image: FOOD_IMAGES.fishTofuSkewers },
+                            { id: 104, name: '烤茄子(3串)', desc: '配秘制酱料', price: 8, originalPrice: 15, sales: 75, calories: 120, image: FOOD_IMAGES.grilledEggplant }
                         ]
                     }
                 ]
@@ -696,20 +704,20 @@
                 packagingFee: 0,
                 discountRules: [{ threshold: 25, amount: 3 }],
                 distance: 0.5,
-                image: FOOD_IMAGES.porkRice,
+                image: FOOD_IMAGES.beefNoodles,
                 imageType: 'img',
                 categories: [
                     {
                         name: '招牌面食',
                         dishes: [
-                            { id: 201, name: '牛肉面(大碗)', desc: '汤浓肉嫩，老板手工拉面', price: 14, originalPrice: 22, sales: 250, calories: 580, image: FOOD_IMAGES.porkRice },
-                            { id: 202, name: '羊肉面(大碗)', desc: '鲜香四溢，回头客必点', price: 15, originalPrice: 24, sales: 180, calories: 620, image: FOOD_IMAGES.porkRice }
+                            { id: 201, name: '牛肉面(大碗)', desc: '汤浓肉嫩，老板手工拉面', price: 14, originalPrice: 22, sales: 250, calories: 580, image: FOOD_IMAGES.beefNoodles },
+                            { id: 202, name: '羊肉面(大碗)', desc: '鲜香四溢，回头客必点', price: 15, originalPrice: 24, sales: 180, calories: 620, image: FOOD_IMAGES.lambNoodles }
                         ]
                     },
                     {
                         name: '小食拼盘',
                         dishes: [
-                            { id: 203, name: '煮鸡蛋+萝卜', desc: '配面的标配', price: 5, originalPrice: 8, sales: 120, calories: 150, image: FOOD_IMAGES.porkRice }
+                            { id: 203, name: '煮鸡蛋+萝卜', desc: '配面的标配', price: 5, originalPrice: 8, sales: 120, calories: 150, image: FOOD_IMAGES.eggRadish }
                         ]
                     }
                 ]
@@ -725,14 +733,14 @@
                 packagingFee: 0,
                 discountRules: [{ threshold: 50, amount: 8 }],
                 distance: 0.2,
-                image: FOOD_IMAGES.hotpot,
+                image: FOOD_IMAGES.spicyFish,
                 imageType: 'img',
                 categories: [
                     {
                         name: '拿手菜',
                         dishes: [
-                            { id: 301, name: '水煮鱼(中)', desc: '鲜嫩川鱼，麻辣爽口', price: 38, originalPrice: 58, sales: 160, calories: 480, image: FOOD_IMAGES.hotpot },
-                            { id: 302, name: '毛血旺(中)', desc: '经典川菜，晚上必点', price: 26, originalPrice: 42, sales: 140, calories: 380, image: FOOD_IMAGES.hotpot }
+                            { id: 301, name: '水煮鱼(中)', desc: '鲜嫩川鱼，麻辣爽口', price: 38, originalPrice: 58, sales: 160, calories: 480, image: FOOD_IMAGES.spicyFish },
+                            { id: 302, name: '毛血旺(中)', desc: '经典川菜，晚上必点', price: 26, originalPrice: 42, sales: 140, calories: 380, image: FOOD_IMAGES.maoXueWang }
                         ]
                     }
                 ]
@@ -748,14 +756,14 @@
                 packagingFee: 0,
                 discountRules: [{ threshold: 60, amount: 10 }],
                 distance: 0.4,
-                image: FOOD_IMAGES.hotpot,
+                image: FOOD_IMAGES.meatPlatter,
                 imageType: 'img',
                 categories: [
                     {
                         name: '寿喜烧套餐',
                         dishes: [
-                            { id: 401, name: '豪华肉类盘', desc: '和牛+猪五花+鸡肉', price: 48, originalPrice: 78, sales: 110, calories: 520, image: FOOD_IMAGES.hotpot },
-                            { id: 402, name: '海鲜拼盘', desc: '虾+贝类+鱼豆腐', price: 42, originalPrice: 68, sales: 95, calories: 420, image: FOOD_IMAGES.hotpot }
+                            { id: 401, name: '豪华肉类盘', desc: '和牛+猪五花+鸡肉', price: 48, originalPrice: 78, sales: 110, calories: 520, image: FOOD_IMAGES.meatPlatter },
+                            { id: 402, name: '海鲜拼盘', desc: '虾+贝类+鱼豆腐', price: 42, originalPrice: 68, sales: 95, calories: 420, image: FOOD_IMAGES.seafoodPlatter }
                         ]
                     }
                 ]
@@ -771,20 +779,20 @@
                 packagingFee: 0,
                 discountRules: [{ threshold: 40, amount: 6 }],
                 distance: 0.3,
-                image: FOOD_IMAGES.coffee,
+                image: FOOD_IMAGES.roastDuckRice,
                 imageType: 'img',
                 categories: [
                     {
                         name: '港式烧味',
                         dishes: [
-                            { id: 501, name: '烧鸭拼盘', desc: '皮脆肉嫩，港式正宗味', price: 28, originalPrice: 45, sales: 180, calories: 420, image: FOOD_IMAGES.coffee },
-                            { id: 502, name: '咖喱牛腩饭', desc: '咖喱香浓，牛腩软烂', price: 22, originalPrice: 36, sales: 150, calories: 580, image: FOOD_IMAGES.coffee }
+                            { id: 501, name: '烧鸭拼盘', desc: '皮脆肉嫩，港式正宗味', price: 28, originalPrice: 45, sales: 180, calories: 420, image: FOOD_IMAGES.roastDuckRice },
+                            { id: 502, name: '咖喱牛腩饭', desc: '咖喱香浓，牛腩软烂', price: 22, originalPrice: 36, sales: 150, calories: 580, image: FOOD_IMAGES.curryBrisketRice }
                         ]
                     },
                     {
                         name: '饮品',
                         dishes: [
-                            { id: 503, name: '丝袜奶茶', desc: '经典港式，回甘生津', price: 8, originalPrice: 12, sales: 200, calories: 180, image: FOOD_IMAGES.coffee }
+                            { id: 503, name: '丝袜奶茶', desc: '经典港式，回甘生津', price: 8, originalPrice: 12, sales: 200, calories: 180, image: FOOD_IMAGES.milkTea }
                         ]
                     }
                 ]
