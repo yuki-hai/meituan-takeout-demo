@@ -25,10 +25,32 @@ const foodAssets = [
     'assets/food/real/seafood-platter.webp',
     'assets/food/real/roast-duck-rice.webp',
     'assets/food/real/curry-brisket-rice.webp',
-    'assets/food/real/milk-tea.webp'
+    'assets/food/real/milk-tea.webp',
+    'assets/food/real/katsu-rice.webp',
+    'assets/food/real/takoyaki.webp',
+    'assets/food/real/poke-salad.webp',
+    'assets/food/real/chicken-wrap.webp',
+    'assets/food/real/beef-burger.webp',
+    'assets/food/real/chicken-burger.webp',
+    'assets/food/real/bubble-tea.webp',
+    'assets/food/real/milk-tea-glass.webp',
+    'assets/food/real/korean-bbq.webp',
+    'assets/food/real/korean-grill.webp'
 ];
 
 foodAssets.forEach(asset => assert.ok(fs.existsSync(asset), `missing food photo: ${asset}`));
+
+const catalogContext = { window: {} };
+vm.createContext(catalogContext);
+vm.runInContext(fs.readFileSync('restaurant-catalog.js', 'utf8'), catalogContext, { filename: 'restaurant-catalog.js' });
+const catalog = catalogContext.window.ChanlemaCatalog;
+assert.equal(catalog.homeRestaurants.length, 10, 'home should expose all ten merchants');
+assert.equal(Object.keys(catalog.detailRestaurants).length, 5, 'catalog should add five merchant detail records');
+assert.equal(
+    Object.values(catalog.detailRestaurants).flatMap(restaurant => restaurant.categories.flatMap(category => category.dishes)).length,
+    10,
+    'catalog should add ten individually configured dishes'
+);
 
 for (const page of pages) {
     const html = fs.readFileSync(page, 'utf8');

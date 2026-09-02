@@ -518,7 +518,7 @@
 
             <!-- Restaurant Section -->
             <div class="restaurant-section" id="restaurantSection"></div>
-            <div class="photo-credit">菜品图片为相似实拍示意 · <a href="assets/food/real/SOURCES.md" target="_blank" rel="noopener">来源与许可</a></div>
+            <div class="photo-credit">商家名称经公开信息核对，菜单与图片为原型示意 · <a href="assets/food/real/SOURCES.md" target="_blank" rel="noopener">来源与许可</a></div>
         </div>
 
         <!-- Tab Bar -->
@@ -546,6 +546,7 @@
     </div>
 
     <script src="app-state.js?v=0.4"></script>
+    <script src="restaurant-catalog.js?v=0.5"></script>
     <script>
         // 数据
         const CATEGORIES = [
@@ -637,6 +638,11 @@
             7: [1, 3],
             8: [2, 4, 5]
         };
+        CATEGORIES.splice(0, CATEGORIES.length, ...ChanlemaCatalog.categories);
+        PROMOTIONS.splice(0, PROMOTIONS.length, ...ChanlemaCatalog.promotions);
+        RESTAURANTS.splice(0, RESTAURANTS.length, ...ChanlemaCatalog.homeRestaurants);
+        Object.keys(CATEGORY_RESTAURANTS).forEach(key => delete CATEGORY_RESTAURANTS[key]);
+        Object.assign(CATEGORY_RESTAURANTS, ChanlemaCatalog.categoryRestaurants);
         let activeCategory = 1;
         let activeQuery = '';
 
