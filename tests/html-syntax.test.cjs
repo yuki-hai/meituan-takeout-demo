@@ -7,6 +7,7 @@ const pages = [
     'restaurant.html',
     'cart.html',
     'decision.html',
+    'order-success.html',
     'success.html',
     'history.html'
 ];
@@ -40,10 +41,20 @@ for (const page of pages) {
     const localResources = [...html.matchAll(/\b(?:href|src)="([^"]+)"/gi)]
         .map(match => match[1])
         .filter(resource => resource && !resource.startsWith('#') && !/^[a-z]+:/i.test(resource))
+        .filter(resource => !resource.includes('${'))
         .map(resource => resource.split(/[?#]/)[0]);
     localResources.forEach(resource => {
         assert.ok(fs.existsSync(resource), `${page} references missing local resource: ${resource}`);
     });
 }
+
+const restaurantHtml = fs.readFileSync('restaurant.html', 'utf8');
+assert.match(restaurantHtml, /class="dish-item"[^>]*onclick="showDishModal\(/, 'dish card should open its detail modal');
+assert.match(restaurantHtml, /class="dish-detail-image"/, 'dish detail should include the food photo');
+assert.match(restaurantHtml, /约 \$\{dish\.calories\} 千卡/, 'dish detail should include calories');
+
+const decisionHtml = fs.readFileSync('decision.html', 'utf8');
+assert.match(decisionHtml, /onclick="finishOrder\(\)"/, 'decision page should offer a clear place-order action');
+assert.match(decisionHtml, /onclick="finishSkip\(\)"/, 'decision page should preserve the skip-order action');
 
 console.log(`html syntax tests: OK (${pages.length} pages)`);

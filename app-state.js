@@ -6,6 +6,7 @@
         cart: 'chanlema:cart',
         pendingOrder: 'chanlema:pending-order',
         lastOrder: 'chanlema:last-order',
+        lastPlacedOrder: 'chanlema:last-placed-order',
         history: 'chanlema:history',
         stats: 'chanlema:stats'
     };
@@ -189,8 +190,28 @@
         return result;
     }
 
+    function finishPlacedOrder(pendingOrder) {
+        if (!pendingOrder || !pendingOrder.calculation) {
+            throw new Error('订单数据不存在');
+        }
+
+        const result = {
+            ...clone(pendingOrder),
+            status: 'placed',
+            completedAt: new Date().toISOString()
+        };
+        writeJSON(KEYS.lastPlacedOrder, result);
+        removeRaw(KEYS.pendingOrder);
+        clearCart();
+        return result;
+    }
+
     function loadLastOrder() {
         return readJSON(KEYS.lastOrder, null);
+    }
+
+    function loadLastPlacedOrder() {
+        return readJSON(KEYS.lastPlacedOrder, null);
     }
 
     function loadHistory() {
@@ -212,7 +233,9 @@
         createPendingOrder,
         loadPendingOrder,
         finishDecision,
+        finishPlacedOrder,
         loadLastOrder,
+        loadLastPlacedOrder,
         loadHistory,
         loadStats
     };

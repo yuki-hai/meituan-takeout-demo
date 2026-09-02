@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>馋了吗 - 模拟下单成功</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #f2f2f2; color: #2f2926; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
+        button { font: inherit; }
+        .app { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; padding: 28px 16px 110px; background: #fffaf5; }
+        .success { padding: 30px 20px 24px; border-radius: 24px; background: linear-gradient(145deg, #fff 0%, #fff8dc 100%); text-align: center; box-shadow: 0 14px 36px rgba(60, 39, 28, .08); }
+        .check { width: 70px; height: 70px; margin: 0 auto 15px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: #21a366; font-size: 36px; font-weight: 800; }
+        .badge { display: inline-block; padding: 5px 10px; border-radius: 999px; color: #7a5a00; background: #fff0bd; font-size: 11px; font-weight: 700; }
+        h1 { margin: 11px 0 7px; font-size: 26px; }
+        .subtitle { margin: 0; color: #877a72; font-size: 13px; line-height: 1.6; }
+        .amount { margin-top: 17px; font-size: 31px; font-weight: 800; }
+        .amount small { margin-right: 2px; font-size: 17px; }
+        .card { margin-top: 14px; padding: 17px; border: 1px solid #eee3dc; border-radius: 20px; background: #fff; }
+        .card-title { margin-bottom: 14px; font-size: 15px; font-weight: 800; }
+        .status { display: grid; grid-template-columns: 26px 1fr; gap: 4px 10px; }
+        .dot { grid-row: span 2; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: #21a366; font-size: 12px; }
+        .status strong { font-size: 14px; }
+        .status span { color: #93867e; font-size: 12px; }
+        .row { display: flex; justify-content: space-between; gap: 18px; padding: 9px 0; border-bottom: 1px solid #f4efeb; font-size: 13px; }
+        .row:last-child { border-bottom: 0; }
+        .label { flex: 0 0 auto; color: #8c8079; }
+        .value { text-align: right; font-weight: 600; }
+        .items { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0e8e3; }
+        .item { display: flex; justify-content: space-between; gap: 14px; padding: 7px 0; color: #625852; font-size: 12px; }
+        .footer { position: fixed; left: 50%; bottom: 0; width: 100%; max-width: 480px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); transform: translateX(-50%); background: rgba(255,255,255,.95); border-top: 1px solid #eee; backdrop-filter: blur(12px); }
+        .home { width: 100%; min-height: 50px; border: 0; border-radius: 16px; color: #2f2926; background: #ffc300; font-weight: 800; cursor: pointer; }
+        .error { margin-top: 100px; text-align: center; }
+        .error a { color: #d95a39; }
+    </style>
+</head>
+<body>
+    <main class="app" id="app">
+        <section class="success">
+            <div class="check">✓</div>
+            <span class="badge">模拟订单 · 实际扣款 ¥0</span>
+            <h1>下单成功</h1>
+            <p class="subtitle">订单已在演示中生成<br>不会向商家发单或安排配送</p>
+            <div class="amount"><small>¥</small><span id="total">0.00</span></div>
+        </section>
+
+        <section class="card">
+            <div class="card-title">订单状态</div>
+            <div class="status">
+                <div class="dot">✓</div>
+                <strong>模拟下单已完成</strong>
+                <span id="deliveryStatus">预计 30 分钟送达</span>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-title">本次订单</div>
+            <div class="row"><span class="label">商家</span><span class="value" id="restaurantName">—</span></div>
+            <div class="row"><span class="label">订单号</span><span class="value" id="orderId">—</span></div>
+            <div class="row"><span class="label">配送方式</span><span class="value" id="deliveryMode">—</span></div>
+            <div class="row"><span class="label">下单时间</span><span class="value" id="orderTime">—</span></div>
+            <div class="items" id="orderItems"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <button class="home" onclick="goHome()">完成，返回首页</button>
+    </footer>
+
+    <script src="app-state.js?v=0.4"></script>
+    <script>
+        function init() {
+            const order = Chanlema.loadLastPlacedOrder();
+            if (!order || !order.calculation) {
+                document.getElementById('app').innerHTML = '<div class="error"><h2>没有找到已下单记录</h2><p><a href="index.html">返回首页</a></p></div>';
+                return;
+            }
+
+            document.getElementById('total').textContent = Number(order.calculation.total || 0).toFixed(2);
+            document.getElementById('restaurantName').textContent = order.restaurant?.name || '演示商家';
+            document.getElementById('orderId').textContent = order.id.slice(-12).toUpperCase();
+            document.getElementById('deliveryMode').textContent = order.calculation.deliveryMode === 'pickup' ? '到店自取' : '商家配送';
+            document.getElementById('deliveryStatus').textContent = order.calculation.deliveryMode === 'pickup' ? '预计 20 分钟可取餐' : '预计 30 分钟送达';
+            document.getElementById('orderTime').textContent = new Date(order.completedAt || order.createdAt).toLocaleString('zh-CN');
+            document.getElementById('orderItems').innerHTML = order.items.map(item => `
+                <div class="item">
+                    <span>${item.name} × ${item.count}</span>
+                    <strong>¥${(Number(item.price) * Number(item.count)).toFixed(2)}</strong>
+                </div>
+            `).join('');
+        }
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        init();
+    </script>
+</body>
+</html>

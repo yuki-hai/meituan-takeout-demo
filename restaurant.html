@@ -204,6 +204,19 @@
             margin-bottom: 16px;
             padding-bottom: 12px;
             border-bottom: 1px solid #f5f5f5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .dish-item:active {
+            background: #fafafa;
+            transform: scale(0.99);
+        }
+
+        .dish-item:focus-visible {
+            outline: 2px solid #FFC300;
+            outline-offset: 3px;
         }
 
         .dish-item:last-child {
@@ -479,6 +492,45 @@
             padding: 16px;
         }
 
+        .dish-detail-image {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            object-fit: cover;
+            display: block;
+            background: #f5f5f5;
+        }
+
+        .dish-detail-summary {
+            padding: 14px 16px 0;
+        }
+
+        .dish-detail-description {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .dish-detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .dish-detail-tag {
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: #fff7df;
+            color: #7a5a00;
+            font-size: 12px;
+        }
+
+        .dish-detail-photo-note {
+            margin-top: 8px;
+            color: #aaa;
+            font-size: 11px;
+        }
+
         .spec-group {
             margin-bottom: 20px;
         }
@@ -524,7 +576,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            sticky;
+            position: sticky;
             bottom: 0;
             background: #fff;
         }
@@ -642,7 +694,7 @@
         <div class="modal" id="modal"></div>
     </div>
 
-    <script src="app-state.js"></script>
+    <script src="app-state.js?v=0.4"></script>
     <script>
         // 项目内置的真实摄影素材，来源与许可记录见 assets/food/real/SOURCES.md。
         const FOOD_IMAGES = {
@@ -873,7 +925,7 @@
                             .filter(item => Number(item.id) === Number(dish.id))
                             .reduce((sum, item) => sum + Number(item.count || 0), 0);
                         return `
-                            <div class="dish-item">
+                            <div class="dish-item" role="button" tabindex="0" aria-label="查看${dish.name}详情" onclick="showDishModal(${dish.id})" onkeydown="handleDishKey(event, ${dish.id})">
                                 <div class="dish-img" style="background: url('${dish.image}') center/cover;"></div>
                                 <div class="dish-info">
                                     <div class="dish-name">${dish.name}</div>
@@ -882,9 +934,9 @@
                                     <div class="dish-footer">
                                         <div class="dish-price">${dish.price}</div>
                                         <div class="dish-controls">
-                                            ${count > 0 ? `<button class="dish-btn dish-btn-minus" onclick="removeDish(${dish.id})">−</button>` : ''}
+                                            ${count > 0 ? `<button class="dish-btn dish-btn-minus" aria-label="减少${dish.name}" onclick="event.stopPropagation(); removeDish(${dish.id})">−</button>` : ''}
                                             ${count > 0 ? `<span class="dish-count show" id="count-${dish.id}">${count}</span>` : ''}
-                                            <button class="dish-btn dish-btn-plus" onclick="showDishModal(${dish.id})">+</button>
+                                            <button class="dish-btn dish-btn-plus" aria-label="选择${dish.name}规格" onclick="event.stopPropagation(); showDishModal(${dish.id})">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -905,6 +957,13 @@
             document.querySelectorAll('.sidebar-item').forEach((item, i) => {
                 item.classList.toggle('active', i === index);
             });
+        }
+
+        function handleDishKey(event, dishId) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showDishModal(dishId);
+            }
         }
 
         function showDishModal(dishId) {
@@ -1001,7 +1060,16 @@
             modal.innerHTML = `
                 <div class="modal-header">
                     <div class="modal-title">${dish.name}</div>
-                    <button class="modal-close-btn" id="modalCloseBtn">×</button>
+                    <button class="modal-close-btn" id="modalCloseBtn" aria-label="关闭菜品详情">×</button>
+                </div>
+                <img class="dish-detail-image" src="${dish.image}" alt="${dish.name}相似菜品实拍示意">
+                <div class="dish-detail-summary">
+                    <div class="dish-detail-description">${dish.desc}</div>
+                    <div class="dish-detail-meta">
+                        <span class="dish-detail-tag">约 ${dish.calories} 千卡</span>
+                        <span class="dish-detail-tag">月售 ${dish.sales}</span>
+                    </div>
+                    <div class="dish-detail-photo-note">图片为相似菜品实拍示意，以商家实际出餐为准</div>
                 </div>
                 <div class="modal-content">
                     ${specsHTML}

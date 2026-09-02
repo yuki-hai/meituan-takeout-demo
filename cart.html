@@ -494,7 +494,7 @@
 
             <!-- Notice -->
             <div class="notice">
-                ⚠️ 本订单为模拟下单，不会扣款或配送。下一步会先询问你准备吃什么，再计算真正的净节省。
+                ⚠️ 本订单为产品演示，不会真实扣款或配送。下一步可以明确选择“模拟下单”或“这顿不点”。
             </div>
         </div>
 
@@ -504,11 +504,11 @@
                 <div class="total-label">合计</div>
                 <div class="total-amount" id="bottomTotal">0.00</div>
             </div>
-            <button class="submit-btn" id="submitButton" onclick="placeOrder()">模拟付款</button>
+            <button class="submit-btn" id="submitButton" onclick="placeOrder()">继续确认</button>
         </div>
     </div>
 
-    <script src="app-state.js"></script>
+    <script src="app-state.js?v=0.4"></script>
     <script>
         const cart = Chanlema.loadCart();
         let selectedDelivery = 'delivery';
@@ -576,7 +576,7 @@
             submitButton.textContent = currentOrder.itemCount === 0
                 ? '购物车为空'
                 : currentOrder.canCheckout
-                    ? '模拟付款'
+                    ? '继续确认'
                     : `差¥${currentOrder.amountToMinimum.toFixed(1)}起送`;
         }
 
