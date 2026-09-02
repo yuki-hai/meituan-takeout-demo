@@ -556,51 +556,75 @@
         const RESTAURANTS = [
             {
                 id: 1,
-                name: '瑞幸咖啡(浦东软件园亮秀路店)',
-                rating: 4.3,
-                sales: 1000,
-                deliveryTime: 30,
+                name: '東盛炭烤自助料理(长泰广场店)',
+                rating: 4.6,
+                sales: 1200,
+                deliveryTime: 25,
                 deliveryFee: 6,
-                minPrice: 20,
-                image: 'assets/food/coffee-shop.webp',
-                tags: ['月售1000+', '堂食店'],
-                activities: ['满30减11', '满48减16']
+                minPrice: 28,
+                image: 'assets/food/spicy-hotpot.webp',
+                tags: ['夜宵热点', '自助烧烤'],
+                activities: ['满58减12']
             },
             {
                 id: 2,
-                name: '沙县小吃·隆江猪脚板',
-                rating: 4.8,
-                sales: 1000,
-                deliveryTime: 30,
-                deliveryFee: 3.1,
-                minPrice: 20,
+                name: '陳香貴·蘭州牛肉面(长泰广场店)',
+                rating: 4.7,
+                sales: 1100,
+                deliveryTime: 20,
+                deliveryFee: 3,
+                minPrice: 15,
                 image: 'assets/food/pork-trotter-rice.webp',
-                tags: ['月售1000+', '演示外送'],
-                activities: ['满35减5']
+                tags: ['人气面馆', '快手夜宵'],
+                activities: ['满25减3']
             },
             {
                 id: 3,
-                name: '呷哺呷哺(罗山路店)',
+                name: '鱼非鱼(长泰广场店)',
                 rating: 4.5,
-                sales: 800,
-                deliveryTime: 25,
-                deliveryFee: 4,
-                minPrice: 25,
+                sales: 950,
+                deliveryTime: 30,
+                deliveryFee: 5,
+                minPrice: 30,
                 image: 'assets/food/spicy-hotpot.webp',
-                tags: ['品牌连锁', '堂食店'],
-                activities: ['满50减10']
+                tags: ['川菜美食', '麻辣爽口'],
+                activities: ['满50减8']
+            },
+            {
+                id: 4,
+                name: '一绪に寿喜烧放题(长泰广场店)',
+                rating: 4.4,
+                sales: 800,
+                deliveryTime: 28,
+                deliveryFee: 7,
+                minPrice: 35,
+                image: 'assets/food/spicy-hotpot.webp',
+                tags: ['日式火锅', '放题聚餐'],
+                activities: ['满60减10']
+            },
+            {
+                id: 5,
+                name: '新旺茶餐廳(长泰广场店)',
+                rating: 4.3,
+                sales: 920,
+                deliveryTime: 22,
+                deliveryFee: 4,
+                minPrice: 20,
+                image: 'assets/food/coffee-shop.webp',
+                tags: ['港式烧味', '经典港茶'],
+                activities: ['满40减6']
             }
         ];
 
         const CATEGORY_RESTAURANTS = {
-            1: [1, 2, 3],
-            2: [1],
-            3: [],
-            4: [],
-            5: [],
-            6: [2, 3],
-            7: [1],
-            8: [1, 2]
+            1: [1, 2, 3, 4, 5],
+            2: [5],
+            3: [3, 4],
+            4: [2],
+            5: [5],
+            6: [1],
+            7: [1, 3],
+            8: [2, 4, 5]
         };
         let activeCategory = 1;
         let activeQuery = '';
