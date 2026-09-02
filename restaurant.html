@@ -851,6 +851,66 @@
             }
         };
 
+        const DISH_SPEC_CONFIG = {
+            101: [
+                { title: '份量', options: [{ label: '5串' }, { label: '10串', price: 16, calories: 2 }] },
+                { title: '辣度', options: [{ label: '微辣' }, { label: '中辣' }, { label: '重辣' }] }
+            ],
+            102: [
+                { title: '份量', options: [{ label: '4只' }, { label: '8只', price: 14, calories: 2 }] },
+                { title: '口味', options: [{ label: '秘制原味' }, { label: '香辣' }] }
+            ],
+            103: [
+                { title: '份量', options: [{ label: '5串' }, { label: '10串', price: 10, calories: 2 }] },
+                { title: '口味', options: [{ label: '孜然' }, { label: '香辣' }] }
+            ],
+            104: [
+                { title: '份量', options: [{ label: '3串' }, { label: '6串', price: 6, calories: 2 }] },
+                { title: '辣度', options: [{ label: '不辣' }, { label: '微辣' }, { label: '中辣' }] }
+            ],
+            201: [
+                { title: '面量', options: [{ label: '正常' }, { label: '加面', price: 3, calories: 1.18 }] },
+                { title: '面型', options: [{ label: '细面' }, { label: '二细' }, { label: '宽面' }] },
+                { title: '忌口', options: [{ label: '正常' }, { label: '不要香菜' }, { label: '不要葱' }] }
+            ],
+            202: [
+                { title: '面量', options: [{ label: '正常' }, { label: '加面', price: 3, calories: 1.18 }] },
+                { title: '面型', options: [{ label: '细面' }, { label: '二细' }, { label: '宽面' }] },
+                { title: '忌口', options: [{ label: '正常' }, { label: '不要香菜' }, { label: '不要葱' }] }
+            ],
+            203: [
+                { title: '份量', options: [{ label: '单份' }, { label: '双份', price: 4, calories: 2 }] }
+            ],
+            301: [
+                { title: '份量', options: [{ label: '中份' }, { label: '大份', price: 20, calories: 1.5 }] },
+                { title: '辣度', options: [{ label: '微辣' }, { label: '中辣' }, { label: '重辣' }] }
+            ],
+            302: [
+                { title: '份量', options: [{ label: '中份' }, { label: '大份', price: 16, calories: 1.5 }] },
+                { title: '辣度', options: [{ label: '微辣' }, { label: '中辣' }, { label: '重辣' }] }
+            ],
+            401: [
+                { title: '套餐份量', options: [{ label: '2人份' }, { label: '3人份', price: 24, calories: 1.5 }] },
+                { title: '肉类偏好', options: [{ label: '综合搭配' }, { label: '偏牛肉' }, { label: '偏猪肉' }] }
+            ],
+            402: [
+                { title: '套餐份量', options: [{ label: '2人份' }, { label: '3人份', price: 20, calories: 1.5 }] },
+                { title: '蘸料', options: [{ label: '日式酱油' }, { label: '柚子醋' }] }
+            ],
+            501: [
+                { title: '份量', options: [{ label: '单人份' }, { label: '双人份', price: 18, calories: 1.7 }] },
+                { title: '主食', options: [{ label: '配白饭' }, { label: '不配饭' }] }
+            ],
+            502: [
+                { title: '份量', options: [{ label: '标准份' }, { label: '加饭', price: 2, calories: 1.18 }] },
+                { title: '咖喱辣度', options: [{ label: '不辣' }, { label: '微辣' }] }
+            ],
+            503: [
+                { title: '杯型', options: [{ label: '中杯' }, { label: '大杯', price: 3, calories: 1.25 }] },
+                { title: '温度', options: [{ label: '热' }, { label: '去冰' }, { label: '正常冰' }] }
+            ]
+        };
+
         let currentRestaurant = null;
         let cart = Chanlema.emptyCart();
 
@@ -966,6 +1026,37 @@
             }
         }
 
+        function renderDishSpecs(dishId) {
+            const groups = DISH_SPEC_CONFIG[dishId] || [
+                { title: '份量', options: [{ label: '标准份' }] }
+            ];
+            return groups.map(group => `
+                <div class="spec-group">
+                    <div class="spec-title">${group.title}</div>
+                    <div class="spec-options">
+                        ${group.options.map((option, index) => `
+                            <div class="spec-option ${index === 0 ? 'selected' : ''}"
+                                role="button" tabindex="0"
+                                data-label="${option.label}"
+                                data-price-adjustment="${Number(option.price || 0)}"
+                                data-calorie-multiplier="${Number(option.calories || 1)}"
+                                onclick="selectSpec(this)"
+                                onkeydown="handleSpecKey(event, this)">
+                                ${option.label}${option.price ? ` +¥${option.price}` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleSpecKey(event, element) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                selectSpec(element);
+            }
+        }
+
         function showDishModal(dishId) {
             let dish = null;
             for (const cat of currentRestaurant.categories) {
@@ -978,84 +1069,14 @@
 
             if (!dish) return;
 
-            // 根据菜品ID判断菜品类型，显示不同的规格选项
-            let specsHTML = '';
-
-            // 咖啡类（ID 100-199）- 显示温度选项
-            if (dishId >= 100 && dishId < 200) {
-                specsHTML = `
-                    <div class="spec-group">
-                        <div class="spec-title">份量</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">中杯</div>
-                            <div class="spec-option" onclick="selectSpec(this)">大杯</div>
-                        </div>
-                    </div>
-                    <div class="spec-group">
-                        <div class="spec-title">温度</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">常温</div>
-                            <div class="spec-option" onclick="selectSpec(this)">冷</div>
-                            <div class="spec-option" onclick="selectSpec(this)">加冰</div>
-                        </div>
-                    </div>
-                `;
-            }
-            // 米饭类（ID 200-299）- 显示份量选项，不显示温度
-            else if (dishId >= 200 && dishId < 300) {
-                specsHTML = `
-                    <div class="spec-group">
-                        <div class="spec-title">份量</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">标准份</div>
-                            <div class="spec-option" onclick="selectSpec(this)">加量</div>
-                        </div>
-                    </div>
-                    <div class="spec-group">
-                        <div class="spec-title">配菜</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">不要葱</div>
-                            <div class="spec-option" onclick="selectSpec(this)">不要辣</div>
-                        </div>
-                    </div>
-                `;
-            }
-            // 火锅类（ID 300-399）
-            else if (dishId >= 300 && dishId < 400) {
-                specsHTML = `
-                    <div class="spec-group">
-                        <div class="spec-title">辣度</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">中辣</div>
-                            <div class="spec-option" onclick="selectSpec(this)">微辣</div>
-                            <div class="spec-option" onclick="selectSpec(this)">超辣</div>
-                        </div>
-                    </div>
-                    <div class="spec-group">
-                        <div class="spec-title">汤底</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">红汤</div>
-                            <div class="spec-option" onclick="selectSpec(this)">清汤</div>
-                        </div>
-                    </div>
-                `;
-            }
-            // 默认选项
-            else {
-                specsHTML = `
-                    <div class="spec-group">
-                        <div class="spec-title">份量</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">标准</div>
-                        </div>
-                    </div>
-                `;
-            }
+            const specsHTML = renderDishSpecs(dishId);
 
             const modal = document.getElementById('modal');
             modal.dataset.basePrice = dish.price;
             modal.dataset.originalPrice = dish.originalPrice;
             modal.dataset.selectedPrice = Number(dish.price).toFixed(2);
+            modal.dataset.baseCalories = dish.calories;
+            modal.dataset.selectedCalories = dish.calories;
 
             modal.innerHTML = `
                 <div class="modal-header">
@@ -1066,7 +1087,7 @@
                 <div class="dish-detail-summary">
                     <div class="dish-detail-description">${dish.desc}</div>
                     <div class="dish-detail-meta">
-                        <span class="dish-detail-tag">约 ${dish.calories} 千卡</span>
+                        <span class="dish-detail-tag" id="detailCalories">约 ${dish.calories} 千卡</span>
                         <span class="dish-detail-tag">月售 ${dish.sales}</span>
                     </div>
                     <div class="dish-detail-photo-note">图片为相似菜品实拍示意，以商家实际出餐为准</div>
@@ -1100,23 +1121,33 @@
         function updateModalPrice() {
             const modal = document.getElementById('modal');
             const basePrice = parseFloat(modal.dataset.basePrice);
+            const originalPrice = parseFloat(modal.dataset.originalPrice);
             const allSpecOptions = modal.querySelectorAll('.spec-option.selected');
             let priceAdjustment = 0;
 
             allSpecOptions.forEach(option => {
-                const text = option.textContent;
-                if (text.includes('加量') || text.includes('大杯')) {
-                    priceAdjustment += 5;
-                } else if (text.includes('加冰')) {
-                    priceAdjustment += 1;
-                }
+                priceAdjustment += Number(option.dataset.priceAdjustment || 0);
             });
 
             const newPrice = basePrice + priceAdjustment;
+            const calorieMultiplier = Array.from(allSpecOptions).reduce(
+                (result, option) => result * Number(option.dataset.calorieMultiplier || 1),
+                1
+            );
+            const selectedCalories = Math.round(Number(modal.dataset.baseCalories || 0) * calorieMultiplier);
             modal.dataset.selectedPrice = newPrice.toFixed(2);
+            modal.dataset.selectedCalories = selectedCalories;
             const priceDisplay = modal.querySelector('.price-value');
             if (priceDisplay) {
                 priceDisplay.textContent = newPrice.toFixed(1);
+            }
+            const originalPriceDisplay = modal.querySelector('.price-label');
+            if (originalPriceDisplay) {
+                originalPriceDisplay.textContent = `¥${(originalPrice + priceAdjustment).toFixed(1)}`;
+            }
+            const calorieDisplay = modal.querySelector('#detailCalories');
+            if (calorieDisplay) {
+                calorieDisplay.textContent = `约 ${selectedCalories} 千卡`;
             }
         }
 
@@ -1135,12 +1166,12 @@
             const modal = document.getElementById('modal');
             const specs = Array.from(modal.querySelectorAll('.spec-group')).map(group => {
                 const title = group.querySelector('.spec-title')?.textContent.trim() || '规格';
-                const value = group.querySelector('.spec-option.selected')?.textContent.trim() || '默认';
+                const selectedOption = group.querySelector('.spec-option.selected');
+                const value = selectedOption?.dataset.label || selectedOption?.textContent.trim() || '默认';
                 return `${title}：${value}`;
             });
             const selectedPrice = Number(modal.dataset.selectedPrice || modal.dataset.basePrice || dish.price);
-            const isLargerPortion = specs.some(spec => spec.includes('大杯') || spec.includes('加量'));
-            const selectedCalories = Math.round(dish.calories * (isLargerPortion ? 1.2 : 1));
+            const selectedCalories = Number(modal.dataset.selectedCalories || dish.calories);
             const variantKey = `${dishId}|${specs.join('|')}`;
             const item = cart.items.find(i => i.variantKey === variantKey);
             if (item) {

@@ -52,6 +52,9 @@ const restaurantHtml = fs.readFileSync('restaurant.html', 'utf8');
 assert.match(restaurantHtml, /class="dish-item"[^>]*onclick="showDishModal\(/, 'dish card should open its detail modal');
 assert.match(restaurantHtml, /class="dish-detail-image"/, 'dish detail should include the food photo');
 assert.match(restaurantHtml, /约 \$\{dish\.calories\} 千卡/, 'dish detail should include calories');
+assert.match(restaurantHtml, /104:\s*\[\s*\{ title: '份量'/, 'grilled eggplant should have dish-specific portion options');
+assert.match(restaurantHtml, /503:\s*\[\s*\{ title: '杯型'/, 'only the milk tea should use cup-size options');
+assert.doesNotMatch(restaurantHtml, /dishId\s*>=\s*100/, 'dish specs should not be inferred from legacy id ranges');
 
 const decisionHtml = fs.readFileSync('decision.html', 'utf8');
 assert.match(decisionHtml, /onclick="finishOrder\(\)"/, 'decision page should offer a clear place-order action');
