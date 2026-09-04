@@ -277,6 +277,16 @@
             cursor: pointer;
         }
 
+        .photo-credit {
+            padding: 4px 16px 84px;
+            color: #aaa;
+            background: #fff;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .photo-credit a { color: #8b8179; }
+
         .restaurant-card {
             background: #fff;
             margin: 0 12px 12px;
@@ -508,6 +518,7 @@
 
             <!-- Restaurant Section -->
             <div class="restaurant-section" id="restaurantSection"></div>
+            <div class="photo-credit">菜品实拍内容与菜名逐项对应，非商家官方商品图 · <a href="assets/food/real/SOURCES.md" target="_blank" rel="noopener">来源与许可</a></div>
         </div>
 
         <!-- Tab Bar -->
@@ -534,7 +545,8 @@
         <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
     </div>
 
-    <script src="app-state.js"></script>
+    <script src="app-state.js?v=0.4"></script>
+    <script src="restaurant-catalog.js?v=0.5"></script>
     <script>
         // 数据
         const CATEGORIES = [
@@ -549,8 +561,8 @@
         ];
 
         const PROMOTIONS = [
-            { id: 1, title: '夜宵烧烤套餐', price: '¥28', desc: '满58减12', image: 'https://images.unsplash.com/photo-1603894572955-d7234a330ca3?w=600&h=400&fit=crop' },
-            { id: 2, title: '招牌牛肉面', price: '¥14', desc: '新鲜直达', image: 'https://images.unsplash.com/photo-1612874742237-415c69b63a53?w=600&h=400&fit=crop' }
+            { id: 1, title: '炭烤双人组合', price: '¥22.1', desc: '限时免配送费', image: 'assets/food/real/lamb-skewers.webp' },
+            { id: 2, title: '招牌牛肉面套餐', price: '¥23.9', desc: '午餐人气款', image: 'assets/food/real/beef-noodles.webp' }
         ];
 
         const RESTAURANTS = [
@@ -562,7 +574,7 @@
                 deliveryTime: 25,
                 deliveryFee: 6,
                 minPrice: 28,
-                image: 'https://images.unsplash.com/photo-1603894572955-d7234a330ca3?w=600&h=400&fit=crop',
+                image: 'assets/food/real/lamb-skewers.webp',
                 tags: ['夜宵热点', '自助烧烤'],
                 activities: ['满58减12']
             },
@@ -574,7 +586,7 @@
                 deliveryTime: 20,
                 deliveryFee: 3,
                 minPrice: 15,
-                image: 'https://images.unsplash.com/photo-1612874742237-415c69b63a53?w=600&h=400&fit=crop',
+                image: 'assets/food/real/beef-noodles.webp',
                 tags: ['人气面馆', '快手夜宵'],
                 activities: ['满25减3']
             },
@@ -586,7 +598,7 @@
                 deliveryTime: 30,
                 deliveryFee: 5,
                 minPrice: 30,
-                image: 'https://images.unsplash.com/photo-1606599810694-178fa7ead25f?w=600&h=400&fit=crop',
+                image: 'assets/food/real/spicy-fish.webp',
                 tags: ['川菜美食', '麻辣爽口'],
                 activities: ['满50减8']
             },
@@ -598,7 +610,7 @@
                 deliveryTime: 28,
                 deliveryFee: 7,
                 minPrice: 35,
-                image: 'https://images.unsplash.com/photo-1596899486516-d4f8de246f00?w=600&h=400&fit=crop',
+                image: 'assets/food/real/meat-platter.webp',
                 tags: ['日式火锅', '放题聚餐'],
                 activities: ['满60减10']
             },
@@ -610,7 +622,7 @@
                 deliveryTime: 22,
                 deliveryFee: 4,
                 minPrice: 20,
-                image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop',
+                image: 'assets/food/real/roast-duck-rice.webp',
                 tags: ['港式烧味', '经典港茶'],
                 activities: ['满40减6']
             }
@@ -626,6 +638,11 @@
             7: [1, 3],
             8: [2, 4, 5]
         };
+        CATEGORIES.splice(0, CATEGORIES.length, ...ChanlemaCatalog.categories);
+        PROMOTIONS.splice(0, PROMOTIONS.length, ...ChanlemaCatalog.promotions);
+        RESTAURANTS.splice(0, RESTAURANTS.length, ...ChanlemaCatalog.homeRestaurants);
+        Object.keys(CATEGORY_RESTAURANTS).forEach(key => delete CATEGORY_RESTAURANTS[key]);
+        Object.assign(CATEGORY_RESTAURANTS, ChanlemaCatalog.categoryRestaurants);
         let activeCategory = 1;
         let activeQuery = '';
 

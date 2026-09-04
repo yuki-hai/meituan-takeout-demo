@@ -41,6 +41,7 @@
         .preview strong { color: #ffb18f; }
         .actions { margin-top: 18px; display: grid; gap: 9px; }
         .primary { min-height: 50px; border: 0; border-radius: 16px; background: #e85d39; color: #fff; font-weight: 800; cursor: pointer; }
+        .place-order { min-height: 50px; border: 0; border-radius: 16px; background: #ffc300; color: #2f2926; font-weight: 800; cursor: pointer; }
         .secondary { min-height: 44px; border: 0; background: transparent; color: #7d7068; cursor: pointer; }
         .error { margin-top: 100px; padding: 28px; text-align: center; }
         .error a { color: #e85d39; }
@@ -50,15 +51,15 @@
     <main class="app">
         <div class="top">
             <button class="back" onclick="history.back()" aria-label="返回">←</button>
-            <span class="safe">模拟付款完成 · 实际扣款 ¥0</span>
+            <span class="safe">演示模式 · 不会真实扣款</span>
         </div>
 
         <div id="content">
             <section class="hero">
                 <div class="clock">⏱</div>
-                <div class="eyebrow">付款前，最后问一次</div>
-                <h1>这单现在真的需要吗？</h1>
-                <p class="intro">不是劝你挨饿。只是把冲动外卖换成一顿更合适的饭，再看看真正能省多少钱和热量。</p>
+                <div class="eyebrow">付款前，最后确认</div>
+                <h1>确认下单，还是这顿不点？</h1>
+                <p class="intro">你可以完成一次模拟下单，也可以换成一顿更合适的饭，看看真正能省多少钱和热量。</p>
                 <div class="order">
                     <div class="row"><span class="muted">这笔外卖订单</span><strong>¥<span id="orderTotal">0.0</span></strong></div>
                     <div class="row" style="margin-top:7px"><span class="muted" id="restaurantName"></span><span class="muted" id="orderCalories"></span></div>
@@ -79,13 +80,14 @@
             </div>
 
             <div class="actions">
-                <button class="primary" onclick="finishSkip()">这单不点了，看看结果</button>
+                <button class="place-order" id="placeOrderButton" onclick="finishOrder()">模拟支付并下单</button>
+                <button class="primary" onclick="finishSkip()">这顿不点，看看省下多少</button>
                 <button class="secondary" onclick="history.back()">我再看看订单</button>
             </div>
         </div>
     </main>
 
-    <script src="app-state.js"></script>
+    <script src="app-state.js?v=0.4"></script>
     <script>
         const alternatives = [
             { id: 'home', label: '家里简餐', detail: '约 ¥9 · 480 kcal', cost: 9, calories: 480, icon: '🍳' },
@@ -148,12 +150,18 @@
             window.location.href = 'success.html';
         }
 
+        function finishOrder() {
+            Chanlema.finishPlacedOrder(pendingOrder);
+            window.location.href = 'order-success.html';
+        }
+
         function init() {
             if (!pendingOrder || !pendingOrder.calculation) {
                 document.getElementById('content').innerHTML = '<div class="error"><h2>没有找到待确认订单</h2><p class="muted">请先选择商家和菜品。</p><a href="index.html">返回首页</a></div>';
                 return;
             }
             document.getElementById('orderTotal').textContent = pendingOrder.calculation.total.toFixed(1);
+            document.getElementById('placeOrderButton').textContent = `模拟支付 ¥${pendingOrder.calculation.total.toFixed(1)} 并下单`;
             document.getElementById('restaurantName').textContent = pendingOrder.restaurant.name || '演示商家';
             document.getElementById('orderCalories').textContent = `${pendingOrder.calculation.caloriesLow}–${pendingOrder.calculation.caloriesHigh} kcal`;
             renderAlternatives();

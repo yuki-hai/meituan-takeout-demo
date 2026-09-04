@@ -66,4 +66,16 @@ assert.equal(Chanlema.loadHistory().length, 2);
 assert.equal(Chanlema.loadStats().skippedOrders, 2);
 assert.equal(Chanlema.loadStats().savedMoney, 25.8);
 
+const placedCart = {
+    restaurant: { id: 3, name: '模拟下单商家', deliveryFee: 5, minPrice: 20, discountRules: [] },
+    items: [{ id: 301, variantKey: '301', name: '水煮鱼', price: 38, calories: 480, count: 1 }]
+};
+const placedPending = Chanlema.createPendingOrder(placedCart, 'delivery');
+const placedOrder = Chanlema.finishPlacedOrder(placedPending);
+assert.equal(placedOrder.status, 'placed');
+assert.equal(Chanlema.loadLastPlacedOrder().id, placedOrder.id);
+assert.equal(Chanlema.loadPendingOrder(), null);
+assert.equal(Chanlema.loadCart().items.length, 0);
+assert.equal(Chanlema.loadHistory().length, 2, '完成的模拟订单不应计入“没点”记录');
+
 console.log('app-state tests: OK');

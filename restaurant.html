@@ -204,6 +204,19 @@
             margin-bottom: 16px;
             padding-bottom: 12px;
             border-bottom: 1px solid #f5f5f5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .dish-item:active {
+            background: #fafafa;
+            transform: scale(0.99);
+        }
+
+        .dish-item:focus-visible {
+            outline: 2px solid #FFC300;
+            outline-offset: 3px;
         }
 
         .dish-item:last-child {
@@ -479,6 +492,45 @@
             padding: 16px;
         }
 
+        .dish-detail-image {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            object-fit: cover;
+            display: block;
+            background: #f5f5f5;
+        }
+
+        .dish-detail-summary {
+            padding: 14px 16px 0;
+        }
+
+        .dish-detail-description {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .dish-detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .dish-detail-tag {
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: #fff7df;
+            color: #7a5a00;
+            font-size: 12px;
+        }
+
+        .dish-detail-photo-note {
+            margin-top: 8px;
+            color: #aaa;
+            font-size: 11px;
+        }
+
         .spec-group {
             margin-bottom: 20px;
         }
@@ -524,7 +576,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            sticky;
+            position: sticky;
             bottom: 0;
             background: #fff;
         }
@@ -642,26 +694,25 @@
         <div class="modal" id="modal"></div>
     </div>
 
-    <script src="app-state.js"></script>
+    <script src="app-state.js?v=0.4"></script>
+    <script src="restaurant-catalog.js?v=0.5"></script>
     <script>
-        // 项目内置的写实食物图，避免外链失效。
+        // 项目内置的真实摄影素材，来源与许可记录见 assets/food/real/SOURCES.md。
         const FOOD_IMAGES = {
-            // 烧烤类
-            bbqSkewer: 'https://images.unsplash.com/photo-1603894572955-d7234a330ca3?w=600&h=400&fit=crop',
-            bbqWing: 'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=600&h=400&fit=crop',
-            // 面食类
-            noodles: 'https://images.unsplash.com/photo-1612874742237-415c69b63a53?w=600&h=400&fit=crop',
-            riceNoodles: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=600&h=400&fit=crop',
-            // 川菜类
-            fishStew: 'https://images.unsplash.com/photo-1606599810694-178fa7ead25f?w=600&h=400&fit=crop',
-            mapoTofu: 'https://images.unsplash.com/photo-1618164436241-4473940571f2?w=600&h=400&fit=crop',
-            // 火锅类
-            hotpot: 'https://images.unsplash.com/photo-1596899486516-d4f8de246f00?w=600&h=400&fit=crop',
-            sukiyaki: 'https://images.unsplash.com/photo-1568901346375-23c9450fc58f?w=600&h=400&fit=crop',
-            // 港菜类
-            duck: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop',
-            curryRice: 'https://images.unsplash.com/photo-1596899486516-d4f8de246f00?w=600&h=400&fit=crop',
-            milkTea: 'https://images.unsplash.com/photo-1599599810694-178fa7ead25f?w=600&h=400&fit=crop'
+            lambSkewers: 'assets/food/real/lamb-skewers.webp',
+            chickenWings: 'assets/food/real/chicken-wings.webp',
+            fishTofuSkewers: 'assets/food/real/fish-tofu-skewers.webp',
+            grilledEggplant: 'assets/food/real/grilled-eggplant.webp',
+            beefNoodles: 'assets/food/real/beef-noodles.webp',
+            lambNoodles: 'assets/food/real/lamb-noodles.webp',
+            eggRadish: 'assets/food/real/egg-radish.webp',
+            spicyFish: 'assets/food/real/spicy-fish.webp',
+            maoXueWang: 'assets/food/real/mao-xue-wang.webp',
+            meatPlatter: 'assets/food/real/meat-platter.webp',
+            seafoodPlatter: 'assets/food/real/seafood-platter.webp',
+            roastDuckRice: 'assets/food/real/roast-duck-rice.webp',
+            curryBrisketRice: 'assets/food/real/curry-brisket-rice.webp',
+            milkTea: 'assets/food/real/milk-tea.webp'
         };
 
         const RESTAURANTS_DATA = {
@@ -676,21 +727,21 @@
                 packagingFee: 0,
                 discountRules: [{ threshold: 58, amount: 12 }],
                 distance: 0.3,
-                image: FOOD_IMAGES.bbqSkewer,
+                image: FOOD_IMAGES.lambSkewers,
                 imageType: 'img',
                 categories: [
                     {
                         name: '夜宵必点',
                         dishes: [
-                            { id: 101, name: '羊肉串(5串)', desc: '新疆羊肉，鲜嫩多汁', price: 18, originalPrice: 28, sales: 200, calories: 320, image: 'https://images.unsplash.com/photo-1603894572955-d7234a330ca3?w=600&h=400&fit=crop' },
-                            { id: 102, name: '秘制鸡翅(4只)', desc: '独家腌料，烤得焦香', price: 16, originalPrice: 26, sales: 180, calories: 280, image: 'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=600&h=400&fit=crop' }
+                            { id: 101, name: '香辣肉串(5串)', desc: '肉串现烤，外焦里嫩', price: 18, originalPrice: 28, sales: 200, calories: 320, image: FOOD_IMAGES.lambSkewers },
+                            { id: 102, name: '秘制鸡翅(4只)', desc: '独家腌料，烤得焦香', price: 16, originalPrice: 26, sales: 180, calories: 280, image: FOOD_IMAGES.chickenWings }
                         ]
                     },
                     {
                         name: '烤串类',
                         dishes: [
-                            { id: 103, name: '鱼豆腐(5串)', desc: '软嫩入味', price: 12, originalPrice: 20, sales: 90, calories: 180, image: 'https://images.unsplash.com/photo-1603894572955-d7234a330ca3?w=600&h=400&fit=crop' },
-                            { id: 104, name: '烤茄子(3串)', desc: '配秘制酱料', price: 8, originalPrice: 15, sales: 75, calories: 120, image: 'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=600&h=400&fit=crop' }
+                            { id: 103, name: '鱼丸串(5串)', desc: '鱼丸刷酱现烤', price: 12, originalPrice: 20, sales: 90, calories: 180, image: FOOD_IMAGES.fishTofuSkewers },
+                            { id: 104, name: '炭烤整茄子', desc: '整根茄子炭火烤制', price: 8, originalPrice: 15, sales: 75, calories: 120, image: FOOD_IMAGES.grilledEggplant }
                         ]
                     }
                 ]
@@ -706,20 +757,20 @@
                 packagingFee: 0,
                 discountRules: [{ threshold: 25, amount: 3 }],
                 distance: 0.5,
-                image: 'https://images.unsplash.com/photo-1612874742237-415c69b63a53?w=600&h=400&fit=crop',
+                image: FOOD_IMAGES.beefNoodles,
                 imageType: 'img',
                 categories: [
                     {
                         name: '招牌面食',
                         dishes: [
-                            { id: 201, name: '牛肉面(大碗)', desc: '汤浓肉嫩，老板手工拉面', price: 14, originalPrice: 22, sales: 250, calories: 580, image: 'https://images.unsplash.com/photo-1612874742237-415c69b63a53?w=600&h=400&fit=crop' },
-                            { id: 202, name: '羊肉面(大碗)', desc: '鲜香四溢，回头客必点', price: 15, originalPrice: 24, sales: 180, calories: 620, image: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=600&h=400&fit=crop' }
+                            { id: 201, name: '牛肉面(大碗)', desc: '汤浓肉嫩，老板手工拉面', price: 14, originalPrice: 22, sales: 250, calories: 580, image: FOOD_IMAGES.beefNoodles },
+                            { id: 202, name: '牛肉面小菜套餐', desc: '牛肉面配豆腐、木耳等小菜', price: 15, originalPrice: 24, sales: 180, calories: 620, image: FOOD_IMAGES.lambNoodles }
                         ]
                     },
                     {
                         name: '小食拼盘',
                         dishes: [
-                            { id: 203, name: '煮鸡蛋+萝卜', desc: '配面的标配', price: 5, originalPrice: 8, sales: 120, calories: 150, image: 'https://images.unsplash.com/photo-1612874742237-415c69b63a53?w=600&h=400&fit=crop' }
+                            { id: 203, name: '茶叶蛋', desc: '茶香入味的面馆小食', price: 5, originalPrice: 8, sales: 120, calories: 90, image: FOOD_IMAGES.eggRadish }
                         ]
                     }
                 ]
@@ -735,14 +786,14 @@
                 packagingFee: 0,
                 discountRules: [{ threshold: 50, amount: 8 }],
                 distance: 0.2,
-                image: 'https://images.unsplash.com/photo-1606599810694-178fa7ead25f?w=600&h=400&fit=crop',
+                image: FOOD_IMAGES.spicyFish,
                 imageType: 'img',
                 categories: [
                     {
                         name: '拿手菜',
                         dishes: [
-                            { id: 301, name: '水煮鱼(中)', desc: '鲜嫩川鱼，麻辣爽口', price: 38, originalPrice: 58, sales: 160, calories: 480, image: 'https://images.unsplash.com/photo-1606599810694-178fa7ead25f?w=600&h=400&fit=crop' },
-                            { id: 302, name: '毛血旺(中)', desc: '经典川菜，晚上必点', price: 26, originalPrice: 42, sales: 140, calories: 380, image: 'https://images.unsplash.com/photo-1618164436241-4473940571f2?w=600&h=400&fit=crop' }
+                            { id: 301, name: '水煮鱼(中)', desc: '鲜嫩川鱼，麻辣爽口', price: 38, originalPrice: 58, sales: 160, calories: 480, image: FOOD_IMAGES.spicyFish },
+                            { id: 302, name: '毛血旺(中)', desc: '经典川菜，晚上必点', price: 26, originalPrice: 42, sales: 140, calories: 380, image: FOOD_IMAGES.maoXueWang }
                         ]
                     }
                 ]
@@ -758,14 +809,14 @@
                 packagingFee: 0,
                 discountRules: [{ threshold: 60, amount: 10 }],
                 distance: 0.4,
-                image: 'https://images.unsplash.com/photo-1596899486516-d4f8de246f00?w=600&h=400&fit=crop',
+                image: FOOD_IMAGES.meatPlatter,
                 imageType: 'img',
                 categories: [
                     {
                         name: '寿喜烧套餐',
                         dishes: [
-                            { id: 401, name: '豪华肉类盘', desc: '和牛+猪五花+鸡肉', price: 48, originalPrice: 78, sales: 110, calories: 520, image: 'https://images.unsplash.com/photo-1596899486516-d4f8de246f00?w=600&h=400&fit=crop' },
-                            { id: 402, name: '海鲜拼盘', desc: '虾+贝类+鱼豆腐', price: 42, originalPrice: 68, sales: 95, calories: 420, image: 'https://images.unsplash.com/photo-1568901346375-23c9450fc58f?w=600&h=400&fit=crop' }
+                            { id: 401, name: '豪华牛肉拼盘', desc: '多种部位牛肉拼盘', price: 48, originalPrice: 78, sales: 110, calories: 520, image: FOOD_IMAGES.meatPlatter },
+                            { id: 402, name: '海鲜拼盘', desc: '龙虾、鲜虾与青口贝', price: 42, originalPrice: 68, sales: 95, calories: 420, image: FOOD_IMAGES.seafoodPlatter }
                         ]
                     }
                 ]
@@ -781,25 +832,87 @@
                 packagingFee: 0,
                 discountRules: [{ threshold: 40, amount: 6 }],
                 distance: 0.3,
-                image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop',
+                image: FOOD_IMAGES.roastDuckRice,
                 imageType: 'img',
                 categories: [
                     {
                         name: '港式烧味',
                         dishes: [
-                            { id: 501, name: '烧鸭拼盘', desc: '皮脆肉嫩，港式正宗味', price: 28, originalPrice: 45, sales: 180, calories: 420, image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop' },
-                            { id: 502, name: '咖喱牛腩饭', desc: '咖喱香浓，牛腩软烂', price: 22, originalPrice: 36, sales: 150, calories: 580, image: 'https://images.unsplash.com/photo-1596899486516-d4f8de246f00?w=600&h=400&fit=crop' }
+                            { id: 501, name: '港式烧味饭', desc: '烧味拼盘配米饭和时蔬', price: 28, originalPrice: 45, sales: 180, calories: 420, image: FOOD_IMAGES.roastDuckRice },
+                            { id: 502, name: '滑蛋咖喱牛腩饭', desc: '咖喱牛腩配滑蛋和米饭', price: 22, originalPrice: 36, sales: 150, calories: 580, image: FOOD_IMAGES.curryBrisketRice }
                         ]
                     },
                     {
                         name: '饮品',
                         dishes: [
-                            { id: 503, name: '丝袜奶茶', desc: '经典港式，回甘生津', price: 8, originalPrice: 12, sales: 200, calories: 180, image: 'https://images.unsplash.com/photo-1599599810694-178fa7ead25f?w=600&h=400&fit=crop' }
+                            { id: 503, name: '丝袜奶茶', desc: '经典港式，回甘生津', price: 8, originalPrice: 12, sales: 200, calories: 180, image: FOOD_IMAGES.milkTea }
                         ]
                     }
                 ]
             }
         };
+
+        const DISH_SPEC_CONFIG = {
+            101: [
+                { title: '份量', options: [{ label: '5串' }, { label: '10串', price: 16, calories: 2 }] },
+                { title: '辣度', options: [{ label: '微辣' }, { label: '中辣' }, { label: '重辣' }] }
+            ],
+            102: [
+                { title: '份量', options: [{ label: '4只' }, { label: '8只', price: 14, calories: 2 }] },
+                { title: '口味', options: [{ label: '秘制原味' }, { label: '香辣' }] }
+            ],
+            103: [
+                { title: '份量', options: [{ label: '5串' }, { label: '10串', price: 10, calories: 2 }] },
+                { title: '口味', options: [{ label: '孜然' }, { label: '香辣' }] }
+            ],
+            104: [
+                { title: '份量', options: [{ label: '1份' }, { label: '2份', price: 6, calories: 2 }] },
+                { title: '辣度', options: [{ label: '不辣' }, { label: '微辣' }, { label: '中辣' }] }
+            ],
+            201: [
+                { title: '面量', options: [{ label: '正常' }, { label: '加面', price: 3, calories: 1.18 }] },
+                { title: '面型', options: [{ label: '细面' }, { label: '二细' }, { label: '宽面' }] },
+                { title: '忌口', options: [{ label: '正常' }, { label: '不要香菜' }, { label: '不要葱' }] }
+            ],
+            202: [
+                { title: '面量', options: [{ label: '正常' }, { label: '加面', price: 3, calories: 1.18 }] },
+                { title: '面型', options: [{ label: '细面' }, { label: '二细' }, { label: '宽面' }] },
+                { title: '忌口', options: [{ label: '正常' }, { label: '不要香菜' }, { label: '不要葱' }] }
+            ],
+            203: [
+                { title: '份量', options: [{ label: '单份' }, { label: '双份', price: 4, calories: 2 }] }
+            ],
+            301: [
+                { title: '份量', options: [{ label: '中份' }, { label: '大份', price: 20, calories: 1.5 }] },
+                { title: '辣度', options: [{ label: '微辣' }, { label: '中辣' }, { label: '重辣' }] }
+            ],
+            302: [
+                { title: '份量', options: [{ label: '中份' }, { label: '大份', price: 16, calories: 1.5 }] },
+                { title: '辣度', options: [{ label: '微辣' }, { label: '中辣' }, { label: '重辣' }] }
+            ],
+            401: [
+                { title: '套餐份量', options: [{ label: '2人份' }, { label: '3人份', price: 24, calories: 1.5 }] },
+                { title: '牛肉搭配', options: [{ label: '综合部位' }, { label: '偏瘦' }, { label: '偏肥' }] }
+            ],
+            402: [
+                { title: '套餐份量', options: [{ label: '2人份' }, { label: '3人份', price: 20, calories: 1.5 }] },
+                { title: '蘸料', options: [{ label: '日式酱油' }, { label: '柚子醋' }] }
+            ],
+            501: [
+                { title: '份量', options: [{ label: '单人份' }, { label: '双人份', price: 18, calories: 1.7 }] },
+                { title: '主食', options: [{ label: '配白饭' }, { label: '不配饭' }] }
+            ],
+            502: [
+                { title: '份量', options: [{ label: '标准份' }, { label: '加饭', price: 2, calories: 1.18 }] },
+                { title: '咖喱辣度', options: [{ label: '不辣' }, { label: '微辣' }] }
+            ],
+            503: [
+                { title: '杯型', options: [{ label: '中杯' }, { label: '大杯', price: 3, calories: 1.25 }] },
+                { title: '温度', options: [{ label: '热' }, { label: '去冰' }, { label: '正常冰' }] }
+            ]
+        };
+        Object.assign(RESTAURANTS_DATA, ChanlemaCatalog.detailRestaurants);
+        Object.assign(DISH_SPEC_CONFIG, ChanlemaCatalog.dishSpecs);
 
         let currentRestaurant = null;
         let cart = Chanlema.emptyCart();
@@ -875,7 +988,7 @@
                             .filter(item => Number(item.id) === Number(dish.id))
                             .reduce((sum, item) => sum + Number(item.count || 0), 0);
                         return `
-                            <div class="dish-item">
+                            <div class="dish-item" role="button" tabindex="0" aria-label="查看${dish.name}详情" onclick="showDishModal(${dish.id})" onkeydown="handleDishKey(event, ${dish.id})">
                                 <div class="dish-img" style="background: url('${dish.image}') center/cover;"></div>
                                 <div class="dish-info">
                                     <div class="dish-name">${dish.name}</div>
@@ -884,9 +997,9 @@
                                     <div class="dish-footer">
                                         <div class="dish-price">${dish.price}</div>
                                         <div class="dish-controls">
-                                            ${count > 0 ? `<button class="dish-btn dish-btn-minus" onclick="removeDish(${dish.id})">−</button>` : ''}
+                                            ${count > 0 ? `<button class="dish-btn dish-btn-minus" aria-label="减少${dish.name}" onclick="event.stopPropagation(); removeDish(${dish.id})">−</button>` : ''}
                                             ${count > 0 ? `<span class="dish-count show" id="count-${dish.id}">${count}</span>` : ''}
-                                            <button class="dish-btn dish-btn-plus" onclick="showDishModal(${dish.id})">+</button>
+                                            <button class="dish-btn dish-btn-plus" aria-label="选择${dish.name}规格" onclick="event.stopPropagation(); showDishModal(${dish.id})">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -909,6 +1022,44 @@
             });
         }
 
+        function handleDishKey(event, dishId) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showDishModal(dishId);
+            }
+        }
+
+        function renderDishSpecs(dishId) {
+            const groups = DISH_SPEC_CONFIG[dishId] || [
+                { title: '份量', options: [{ label: '标准份' }] }
+            ];
+            return groups.map(group => `
+                <div class="spec-group">
+                    <div class="spec-title">${group.title}</div>
+                    <div class="spec-options">
+                        ${group.options.map((option, index) => `
+                            <div class="spec-option ${index === 0 ? 'selected' : ''}"
+                                role="button" tabindex="0"
+                                data-label="${option.label}"
+                                data-price-adjustment="${Number(option.price || 0)}"
+                                data-calorie-multiplier="${Number(option.calories || 1)}"
+                                onclick="selectSpec(this)"
+                                onkeydown="handleSpecKey(event, this)">
+                                ${option.label}${option.price ? ` +¥${option.price}` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleSpecKey(event, element) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                selectSpec(element);
+            }
+        }
+
         function showDishModal(dishId) {
             let dish = null;
             for (const cat of currentRestaurant.categories) {
@@ -921,89 +1072,28 @@
 
             if (!dish) return;
 
-            // 根据菜品ID判断菜品类型，显示不同的规格选项
-            let specsHTML = '';
-
-            // 咖啡类（ID 100-199）- 显示温度选项
-            if (dishId >= 100 && dishId < 200) {
-                specsHTML = `
-                    <div class="spec-group">
-                        <div class="spec-title">份量</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">中杯</div>
-                            <div class="spec-option" onclick="selectSpec(this)">大杯</div>
-                        </div>
-                    </div>
-                    <div class="spec-group">
-                        <div class="spec-title">温度</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">常温</div>
-                            <div class="spec-option" onclick="selectSpec(this)">冷</div>
-                            <div class="spec-option" onclick="selectSpec(this)">加冰</div>
-                        </div>
-                    </div>
-                `;
-            }
-            // 米饭类（ID 200-299）- 显示份量选项，不显示温度
-            else if (dishId >= 200 && dishId < 300) {
-                specsHTML = `
-                    <div class="spec-group">
-                        <div class="spec-title">份量</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">标准份</div>
-                            <div class="spec-option" onclick="selectSpec(this)">加量</div>
-                        </div>
-                    </div>
-                    <div class="spec-group">
-                        <div class="spec-title">配菜</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">不要葱</div>
-                            <div class="spec-option" onclick="selectSpec(this)">不要辣</div>
-                        </div>
-                    </div>
-                `;
-            }
-            // 火锅类（ID 300-399）
-            else if (dishId >= 300 && dishId < 400) {
-                specsHTML = `
-                    <div class="spec-group">
-                        <div class="spec-title">辣度</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">中辣</div>
-                            <div class="spec-option" onclick="selectSpec(this)">微辣</div>
-                            <div class="spec-option" onclick="selectSpec(this)">超辣</div>
-                        </div>
-                    </div>
-                    <div class="spec-group">
-                        <div class="spec-title">汤底</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">红汤</div>
-                            <div class="spec-option" onclick="selectSpec(this)">清汤</div>
-                        </div>
-                    </div>
-                `;
-            }
-            // 默认选项
-            else {
-                specsHTML = `
-                    <div class="spec-group">
-                        <div class="spec-title">份量</div>
-                        <div class="spec-options">
-                            <div class="spec-option selected" onclick="selectSpec(this)">标准</div>
-                        </div>
-                    </div>
-                `;
-            }
+            const specsHTML = renderDishSpecs(dishId);
 
             const modal = document.getElementById('modal');
             modal.dataset.basePrice = dish.price;
             modal.dataset.originalPrice = dish.originalPrice;
             modal.dataset.selectedPrice = Number(dish.price).toFixed(2);
+            modal.dataset.baseCalories = dish.calories;
+            modal.dataset.selectedCalories = dish.calories;
 
             modal.innerHTML = `
                 <div class="modal-header">
                     <div class="modal-title">${dish.name}</div>
-                    <button class="modal-close-btn" id="modalCloseBtn">×</button>
+                    <button class="modal-close-btn" id="modalCloseBtn" aria-label="关闭菜品详情">×</button>
+                </div>
+                <img class="dish-detail-image" src="${dish.image}" alt="${dish.name}对应菜品实拍">
+                <div class="dish-detail-summary">
+                    <div class="dish-detail-description">${dish.desc}</div>
+                    <div class="dish-detail-meta">
+                        <span class="dish-detail-tag" id="detailCalories">约 ${dish.calories} 千卡</span>
+                        <span class="dish-detail-tag">月售 ${dish.sales}</span>
+                    </div>
+                    <div class="dish-detail-photo-note">图片内容与菜名对应，非本商家官方商品图；实际出餐以商家为准</div>
                 </div>
                 <div class="modal-content">
                     ${specsHTML}
@@ -1034,23 +1124,33 @@
         function updateModalPrice() {
             const modal = document.getElementById('modal');
             const basePrice = parseFloat(modal.dataset.basePrice);
+            const originalPrice = parseFloat(modal.dataset.originalPrice);
             const allSpecOptions = modal.querySelectorAll('.spec-option.selected');
             let priceAdjustment = 0;
 
             allSpecOptions.forEach(option => {
-                const text = option.textContent;
-                if (text.includes('加量') || text.includes('大杯')) {
-                    priceAdjustment += 5;
-                } else if (text.includes('加冰')) {
-                    priceAdjustment += 1;
-                }
+                priceAdjustment += Number(option.dataset.priceAdjustment || 0);
             });
 
             const newPrice = basePrice + priceAdjustment;
+            const calorieMultiplier = Array.from(allSpecOptions).reduce(
+                (result, option) => result * Number(option.dataset.calorieMultiplier || 1),
+                1
+            );
+            const selectedCalories = Math.round(Number(modal.dataset.baseCalories || 0) * calorieMultiplier);
             modal.dataset.selectedPrice = newPrice.toFixed(2);
+            modal.dataset.selectedCalories = selectedCalories;
             const priceDisplay = modal.querySelector('.price-value');
             if (priceDisplay) {
                 priceDisplay.textContent = newPrice.toFixed(1);
+            }
+            const originalPriceDisplay = modal.querySelector('.price-label');
+            if (originalPriceDisplay) {
+                originalPriceDisplay.textContent = `¥${(originalPrice + priceAdjustment).toFixed(1)}`;
+            }
+            const calorieDisplay = modal.querySelector('#detailCalories');
+            if (calorieDisplay) {
+                calorieDisplay.textContent = `约 ${selectedCalories} 千卡`;
             }
         }
 
@@ -1069,12 +1169,12 @@
             const modal = document.getElementById('modal');
             const specs = Array.from(modal.querySelectorAll('.spec-group')).map(group => {
                 const title = group.querySelector('.spec-title')?.textContent.trim() || '规格';
-                const value = group.querySelector('.spec-option.selected')?.textContent.trim() || '默认';
+                const selectedOption = group.querySelector('.spec-option.selected');
+                const value = selectedOption?.dataset.label || selectedOption?.textContent.trim() || '默认';
                 return `${title}：${value}`;
             });
             const selectedPrice = Number(modal.dataset.selectedPrice || modal.dataset.basePrice || dish.price);
-            const isLargerPortion = specs.some(spec => spec.includes('大杯') || spec.includes('加量'));
-            const selectedCalories = Math.round(dish.calories * (isLargerPortion ? 1.2 : 1));
+            const selectedCalories = Number(modal.dataset.selectedCalories || dish.calories);
             const variantKey = `${dishId}|${specs.join('|')}`;
             const item = cart.items.find(i => i.variantKey === variantKey);
             if (item) {
