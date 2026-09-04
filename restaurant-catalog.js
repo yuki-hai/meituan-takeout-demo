@@ -38,7 +38,7 @@
             image: image('poke-salad'), imageType: 'img',
             categories: [
                 { name: '健康能量碗', dishes: [
-                    { id: 701, name: '烤鸡藜麦能量碗', desc: '时蔬、鸡蛋与高蛋白搭配', price: 42, originalPrice: 58, sales: 180, calories: 520, image: image('poke-salad') }
+                    { id: 701, name: '烤鸡藜麦能量碗', desc: '时蔬、藜麦与烤鸡搭配', price: 42, originalPrice: 58, sales: 180, calories: 520, image: image('poke-salad') }
                 ] },
                 { name: '卷饼与三明治', dishes: [
                     { id: 702, name: '香草鸡肉卷', desc: '鸡肉配生菜和香草酱', price: 32, originalPrice: 45, sales: 140, calories: 480, image: image('chicken-wrap') }
@@ -51,9 +51,9 @@
             discountRules: [{ threshold: 70, amount: 12 }], distance: 0.5,
             image: image('beef-burger'), imageType: 'img',
             categories: [
-                { name: '招牌汉堡', dishes: [
+                { name: '汉堡与三明治', dishes: [
                     { id: 801, name: '经典芝士牛肉汉堡', desc: '牛肉饼、芝士与炸薯条', price: 48, originalPrice: 68, sales: 260, calories: 850, image: image('beef-burger') },
-                    { id: 802, name: '酥脆鸡肉堡', desc: '酥脆鸡排配酸黄瓜酱', price: 38, originalPrice: 55, sales: 190, calories: 720, image: image('chicken-burger') }
+                    { id: 802, name: '酥脆鸡肉三明治', desc: '酥脆鸡排配酸黄瓜和吐司', price: 38, originalPrice: 55, sales: 190, calories: 720, image: image('chicken-burger') }
                 ] }
             ]
         },
@@ -64,8 +64,8 @@
             image: image('bubble-tea'), imageType: 'img',
             categories: [
                 { name: '人气奶茶', dishes: [
-                    { id: 901, name: '芋圆桂花乌龙奶茶', desc: '桂花乌龙茶底配软糯芋圆', price: 18, originalPrice: 24, sales: 360, calories: 330, image: image('bubble-tea') },
-                    { id: 902, name: '黑糖珍珠鲜奶', desc: '黑糖珍珠配鲜奶', price: 20, originalPrice: 26, sales: 280, calories: 420, image: image('milk-tea-glass') }
+                    { id: 901, name: '芋香奶茶', desc: '芋香牛奶茶，冰爽顺滑', price: 18, originalPrice: 24, sales: 360, calories: 330, image: image('bubble-tea') },
+                    { id: 902, name: '珍珠奶茶', desc: '冰奶茶配黑色珍珠', price: 20, originalPrice: 26, sales: 280, calories: 420, image: image('milk-tea-glass') }
                 ] }
             ]
         },
@@ -76,8 +76,8 @@
             image: image('korean-bbq'), imageType: 'img',
             categories: [
                 { name: '韩式烤肉套餐', dishes: [
-                    { id: 1001, name: '韩式烤五花肉套餐', desc: '厚切五花肉配生菜与蘘酱', price: 56, originalPrice: 78, sales: 170, calories: 780, image: image('korean-bbq') },
-                    { id: 1002, name: '调味牛肉烤盘', desc: '酱汁腰肉搭配烤蔬菜', price: 62, originalPrice: 88, sales: 150, calories: 720, image: image('korean-grill') }
+                    { id: 1001, name: '韩式炭火烤肉套餐', desc: '炭火现烤腌制肉片', price: 56, originalPrice: 78, sales: 170, calories: 780, image: image('korean-bbq') },
+                    { id: 1002, name: '炭烤牛肉', desc: '牛肉上桌现烤', price: 62, originalPrice: 88, sales: 150, calories: 720, image: image('korean-grill') }
                 ] }
             ]
         }

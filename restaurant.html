@@ -733,15 +733,15 @@
                     {
                         name: '夜宵必点',
                         dishes: [
-                            { id: 101, name: '羊肉串(5串)', desc: '新疆羊肉，鲜嫩多汁', price: 18, originalPrice: 28, sales: 200, calories: 320, image: FOOD_IMAGES.lambSkewers },
+                            { id: 101, name: '香辣肉串(5串)', desc: '肉串现烤，外焦里嫩', price: 18, originalPrice: 28, sales: 200, calories: 320, image: FOOD_IMAGES.lambSkewers },
                             { id: 102, name: '秘制鸡翅(4只)', desc: '独家腌料，烤得焦香', price: 16, originalPrice: 26, sales: 180, calories: 280, image: FOOD_IMAGES.chickenWings }
                         ]
                     },
                     {
                         name: '烤串类',
                         dishes: [
-                            { id: 103, name: '鱼豆腐(5串)', desc: '软嫩入味', price: 12, originalPrice: 20, sales: 90, calories: 180, image: FOOD_IMAGES.fishTofuSkewers },
-                            { id: 104, name: '烤茄子(3串)', desc: '配秘制酱料', price: 8, originalPrice: 15, sales: 75, calories: 120, image: FOOD_IMAGES.grilledEggplant }
+                            { id: 103, name: '鱼丸串(5串)', desc: '鱼丸刷酱现烤', price: 12, originalPrice: 20, sales: 90, calories: 180, image: FOOD_IMAGES.fishTofuSkewers },
+                            { id: 104, name: '炭烤整茄子', desc: '整根茄子炭火烤制', price: 8, originalPrice: 15, sales: 75, calories: 120, image: FOOD_IMAGES.grilledEggplant }
                         ]
                     }
                 ]
@@ -764,13 +764,13 @@
                         name: '招牌面食',
                         dishes: [
                             { id: 201, name: '牛肉面(大碗)', desc: '汤浓肉嫩，老板手工拉面', price: 14, originalPrice: 22, sales: 250, calories: 580, image: FOOD_IMAGES.beefNoodles },
-                            { id: 202, name: '羊肉面(大碗)', desc: '鲜香四溢，回头客必点', price: 15, originalPrice: 24, sales: 180, calories: 620, image: FOOD_IMAGES.lambNoodles }
+                            { id: 202, name: '牛肉面小菜套餐', desc: '牛肉面配豆腐、木耳等小菜', price: 15, originalPrice: 24, sales: 180, calories: 620, image: FOOD_IMAGES.lambNoodles }
                         ]
                     },
                     {
                         name: '小食拼盘',
                         dishes: [
-                            { id: 203, name: '煮鸡蛋+萝卜', desc: '配面的标配', price: 5, originalPrice: 8, sales: 120, calories: 150, image: FOOD_IMAGES.eggRadish }
+                            { id: 203, name: '茶叶蛋', desc: '茶香入味的面馆小食', price: 5, originalPrice: 8, sales: 120, calories: 90, image: FOOD_IMAGES.eggRadish }
                         ]
                     }
                 ]
@@ -815,8 +815,8 @@
                     {
                         name: '寿喜烧套餐',
                         dishes: [
-                            { id: 401, name: '豪华肉类盘', desc: '和牛+猪五花+鸡肉', price: 48, originalPrice: 78, sales: 110, calories: 520, image: FOOD_IMAGES.meatPlatter },
-                            { id: 402, name: '海鲜拼盘', desc: '虾+贝类+鱼豆腐', price: 42, originalPrice: 68, sales: 95, calories: 420, image: FOOD_IMAGES.seafoodPlatter }
+                            { id: 401, name: '豪华牛肉拼盘', desc: '多种部位牛肉拼盘', price: 48, originalPrice: 78, sales: 110, calories: 520, image: FOOD_IMAGES.meatPlatter },
+                            { id: 402, name: '海鲜拼盘', desc: '龙虾、鲜虾与青口贝', price: 42, originalPrice: 68, sales: 95, calories: 420, image: FOOD_IMAGES.seafoodPlatter }
                         ]
                     }
                 ]
@@ -838,8 +838,8 @@
                     {
                         name: '港式烧味',
                         dishes: [
-                            { id: 501, name: '烧鸭拼盘', desc: '皮脆肉嫩，港式正宗味', price: 28, originalPrice: 45, sales: 180, calories: 420, image: FOOD_IMAGES.roastDuckRice },
-                            { id: 502, name: '咖喱牛腩饭', desc: '咖喱香浓，牛腩软烂', price: 22, originalPrice: 36, sales: 150, calories: 580, image: FOOD_IMAGES.curryBrisketRice }
+                            { id: 501, name: '港式烧味饭', desc: '烧味拼盘配米饭和时蔬', price: 28, originalPrice: 45, sales: 180, calories: 420, image: FOOD_IMAGES.roastDuckRice },
+                            { id: 502, name: '滑蛋咖喱牛腩饭', desc: '咖喱牛腩配滑蛋和米饭', price: 22, originalPrice: 36, sales: 150, calories: 580, image: FOOD_IMAGES.curryBrisketRice }
                         ]
                     },
                     {
@@ -866,7 +866,7 @@
                 { title: '口味', options: [{ label: '孜然' }, { label: '香辣' }] }
             ],
             104: [
-                { title: '份量', options: [{ label: '3串' }, { label: '6串', price: 6, calories: 2 }] },
+                { title: '份量', options: [{ label: '1份' }, { label: '2份', price: 6, calories: 2 }] },
                 { title: '辣度', options: [{ label: '不辣' }, { label: '微辣' }, { label: '中辣' }] }
             ],
             201: [
@@ -892,7 +892,7 @@
             ],
             401: [
                 { title: '套餐份量', options: [{ label: '2人份' }, { label: '3人份', price: 24, calories: 1.5 }] },
-                { title: '肉类偏好', options: [{ label: '综合搭配' }, { label: '偏牛肉' }, { label: '偏猪肉' }] }
+                { title: '牛肉搭配', options: [{ label: '综合部位' }, { label: '偏瘦' }, { label: '偏肥' }] }
             ],
             402: [
                 { title: '套餐份量', options: [{ label: '2人份' }, { label: '3人份', price: 20, calories: 1.5 }] },
@@ -1086,14 +1086,14 @@
                     <div class="modal-title">${dish.name}</div>
                     <button class="modal-close-btn" id="modalCloseBtn" aria-label="关闭菜品详情">×</button>
                 </div>
-                <img class="dish-detail-image" src="${dish.image}" alt="${dish.name}相似菜品实拍示意">
+                <img class="dish-detail-image" src="${dish.image}" alt="${dish.name}对应菜品实拍">
                 <div class="dish-detail-summary">
                     <div class="dish-detail-description">${dish.desc}</div>
                     <div class="dish-detail-meta">
                         <span class="dish-detail-tag" id="detailCalories">约 ${dish.calories} 千卡</span>
                         <span class="dish-detail-tag">月售 ${dish.sales}</span>
                     </div>
-                    <div class="dish-detail-photo-note">图片为相似菜品实拍示意，以商家实际出餐为准</div>
+                    <div class="dish-detail-photo-note">图片内容与菜名对应，非本商家官方商品图；实际出餐以商家为准</div>
                 </div>
                 <div class="modal-content">
                     ${specsHTML}
